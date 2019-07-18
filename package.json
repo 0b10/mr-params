@@ -1,7 +1,7 @@
 {
-  "name": "mr-contract",
+  "name": "mr-params",
   "version": "0.0.1",
-  "description": "Javascript DbC based on experimental decorators",
+  "description": "Get parameter names from a given function reference",
   "main": "dist/index.js",
   "dependencies": {},
   "devDependencies": {
@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/0b10/mr-contract.git"
+    "url": "git+https://github.com/0b10/mr-params.git"
   },
   "keywords": [
     "dbc",
@@ -42,7 +42,7 @@
   "author": "0b10",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/0b10/mr-contract/issues"
+    "url": "https://github.com/0b10/mr-params/issues"
   },
-  "homepage": "https://github.com/0b10/mr-contract#readme"
+  "homepage": "https://github.com/0b10/mr-params#readme"
 }
