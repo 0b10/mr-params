@@ -1,2 +1,3 @@
 # mr-contract
-Javascript DbC based on experimental decorators
+
+Get parameter names from a given function reference.

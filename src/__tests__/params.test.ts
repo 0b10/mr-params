@@ -22,9 +22,3 @@
 // SOFTWARE.
 //
 //
-
-import { helloWorld } from "..";
-
-it("should pass", () => {
-  expect(helloWorld()).toBe(true);
-});
