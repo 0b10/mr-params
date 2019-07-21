@@ -22,3 +22,25 @@
 // SOFTWARE.
 //
 //
+
+// tslint:disable:no-unused-expression
+
+import { Params } from "../../../params";
+
+describe("Unit Tests: params - initialisation", () => {
+  describe("the prams object", () => {
+    it("should be importable", () => {
+      expect(Params).toBeDefined();
+    });
+
+    it("should have a defined parse() method", () => {
+      expect(typeof new Params("() => undefined").parse).toBe("function");
+    });
+
+    it("should accept a string into the constructor", () => {
+      expect(() => {
+        new Params("() => undefined");
+      }).not.toThrow();
+    });
+  });
+});
