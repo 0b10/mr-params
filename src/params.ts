@@ -43,6 +43,26 @@ export class Params implements IParams {
     this.paramNames = [];
     const pushParam = (paramName: string) => this.paramNames.push(paramName);
 
+    const arrayPatternVisitor = {
+      ArrayPattern(path: NodePath) {
+        const { elements } = path.node as any; // elements has a guard
+        if (elements) {
+          elements.forEach((element: Node) => {
+            const { name } = element as any; // name has a guard
+            switch (element.type) {
+              case "Identifier":
+                if (name) {
+                  pushParam(name);
+                }
+                break;
+              default:
+                break;
+            }
+          });
+        }
+      },
+    };
+
     const objectPropsVisitor: Visitor = {
       ObjectProperty(path) {
         // console.log()
@@ -61,7 +81,7 @@ export class Params implements IParams {
           // console.log(params);
           params.forEach((paramNode: Node) => {
             // console.log(paramNode);
-            const { name, type } = paramNode as any; // name is checked;
+            const { name, type } = paramNode as any; // name and type are checked;
             switch (type) {
               case "Identifier":
                 if (name) {
@@ -70,6 +90,9 @@ export class Params implements IParams {
                 break;
               case "ObjectPattern":
                 path.traverse(objectPropsVisitor);
+                break;
+              case "ArrayPattern":
+                path.traverse(arrayPatternVisitor);
                 break;
               default:
                 break;
