@@ -25,44 +25,44 @@
 
 // tslint:disable:no-unused-expression
 
-import { Params } from "../../../params";
+import { parse } from "../../../params";
 
 describe("Unit Tests: params - vanilla params", () => {
   describe("parse()", () => {
     it("return false when there's no params", () => {
-      expect(new Params("() => undefined").parse()).toBe(false);
+      expect(parse("() => undefined")).toBe(false);
     });
 
     [
       {
         expected: ["a"],
-        input: "(a) => undefined",
+        input: "(a) => { }",
       },
       {
         expected: ["a", "b"],
-        input: "(a, b) => undefined",
+        input: "(a, b) => { }",
       },
       {
         expected: ["a", "b", "c"],
-        input: "(a, b, c) => undefined",
+        input: "(a, b, c) => { }",
       },
       {
         expected: ["a"],
-        input: "function fn(a) { return undefined }",
+        input: "function fn(a) { }",
       },
       {
         expected: ["a", "b"],
-        input: "function fn(a, b) { return undefined }",
+        input: "function fn(a, b) { }",
       },
       {
         expected: ["a", "b", "c"],
-        input: "function fn(a, b, c) { return undefined }",
+        input: "function fn(a, b, c) { }",
       },
       // ! Don't test function() {} <-- anonymous. This is transformed by a regex preprocessor
     ].forEach(({ input, expected }, caseNum) => {
       describe(`(#${caseNum}): given the string of a function: '${input}'`, () => {
         it(`should return an array of strings: ["${expected}"]`, () => {
-          expect(new Params(input).parse()).toEqual(expected);
+          expect(parse(input)).toEqual(expected);
         });
       });
     });

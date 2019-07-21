@@ -25,7 +25,7 @@
 
 // tslint:disable:no-unused-expression
 
-import { Params } from "../../../params";
+import { parse } from "../../../params";
 
 describe("Unit Tests: params - destructured params", () => {
   describe("parse()", () => {
@@ -34,53 +34,79 @@ describe("Unit Tests: params - destructured params", () => {
       [
         // ~~~ Simple ~~~
         {
+          // #0
           expected: ["a"],
           input: "function fn({ a }) { }",
         },
         {
+          // #1
           expected: ["a", "b"],
           input: "function fn({ a, b }) { }",
         },
         {
+          // #2
           expected: ["a", "b", "c"],
           input: "function fn({ a, b, c }) { }",
         },
         // ~~~ Nested ~~~
         {
+          // #3
           expected: ["b"],
           input: "function fn({ a: { b } }) { }",
         },
         {
+          // #4
           expected: ["c"],
           input: "function fn({ a: { b: { c } } }) { }",
         },
         {
+          // #5
           expected: ["c", "d", "e"],
           input: "function fn({ a: { b: { c }, d }, e }) { }",
         },
         {
+          // #6
           expected: ["c", "f", "h"],
           input: "function fn({ a: { b: { c }, d: { e: { f } } }, g: { h } }) { }",
         },
         {
+          // #7
           expected: ["c", "e", "j", "k", "l"],
           input: "function fn({ a: { b: { c }, d: { e }, f: { h: { i: { j }, k }, l } } }) { }",
         },
         {
+          // #8
           expected: ["c", "e", "j", "k", "l"],
           input: "({ a: { b: { c }, d: { e }, f: { h: { i: { j }, k }, l } } }) => undefined",
         },
         // ~~~ Multiple Params ~~~
-        // BUG: fails. The tree is traversed multiple times - once for each param.
-        // {
-        //   expected: ["a", "b"],
-        //   input: "function fn({ a }, { b }) { }",
-        // },
+        {
+          // #9
+          expected: ["a", "b"],
+          input: "function fn({ a }, { b }) { }",
+        },
+        {
+          // #10
+          expected: ["a", "b", "c"],
+          input: "function fn({ a }, { b }, { c }) { }",
+        },
+        {
+          // #11
+          expected: ["b", "d", "h"],
+          input: "function fn({a:{ b }}, {c:{ d }}, {e:{f:{g:{ h }}}}) { }",
+        },
         // ! Don't test function() {} <-- anonymous. This is transformed by a regex preprocessor
       ].forEach(({ input, expected }, caseNum) => {
         describe(`(#${caseNum}): given the string of a function: '${input}'`, () => {
-          it(`should return an array of strings: [${expected}]`, () => {
-            expect(new Params(input).parse()).toEqual(expected);
+          it(`should return an array of unordered strings containing: '${expected}'`, () => {
+            const paramNames = parse(input) as string[]; // false only is no params
+
+            paramNames.forEach((paramName) => {
+              expect(expected).toContain(paramName);
+            });
+            const lenOfResult = paramNames.length;
+            expect(lenOfResult).toBe(expected.length);
+            expect(new Set(paramNames).size).toBe(lenOfResult);
           });
         });
       });
@@ -91,59 +117,89 @@ describe("Unit Tests: params - destructured params", () => {
       [
         // ~~~ Simple ~~~
         {
+          // #0
           expected: ["a"],
           input: "function fn([ a ]) { }",
         },
         {
+          // #1
           expected: ["a", "b"],
           input: "function fn([ a, b ]) { }",
         },
         {
+          // #2
           expected: ["a", "b", "c"],
           input: "function fn([ a, b, c ]) { }",
         },
         // ~~~ Nested ~~~
         {
+          // #3
           expected: ["a", "b"],
           input: "function fn([ a, [ b ] ]) { }",
         },
         {
+          // #4
           expected: ["a", "b", "c"],
           input: "function fn([ a, [ b, [ c ] ] ]) { }",
         },
         {
+          // #5
           expected: ["a", "b", "c", "d"],
           input: "function fn([ a, [ b, [ c, [ d ] ] ] ]) { }",
         },
         {
+          // #6
           expected: ["a", "b", "c", "d", "e"],
           input: "function fn([ a, [ b, [ c, [ d ], [ e ] ] ] ]) { }",
         },
         {
+          // #7
           expected: ["a", "b", "c", "d", "e", "f", "g"],
           input: "function fn([ a, [ b, [ c, [ d ], [ e ] ], [ f, [ g ] ] ] ]) { }",
         },
         {
+          // #8
           expected: ["a", "b", "c", "d", "e", "f", "g", "h"],
           input: "function fn([ a, [ b, [ c, [ d ], [ e ] ], [ f, [ g, [ h ] ] ] ] ]) { }",
         },
         {
+          // #9
           expected: ["a", "b", "c", "d", "e", "f", "g", "h", "i"],
           input: "function fn([ a, [ b, [ c, [ d ], [ e ] ], [ f, [ g, [ h ] ] ], [ i ] ] ]) { }",
         },
         // ~~~ Multiple Params ~~~
-        // BUG: fails. The tree is traversed multiple times - once for each param.
-        // {
-        //   expected: ["a", "b", "c"],
-        //   input: "function fn([ a, b ], [ c ]) { }",
-        // },
+        {
+          // #10
+          expected: ["a", "b"],
+          input: "function fn([ a ], [ b ]) { }",
+        },
+        {
+          // #11
+          expected: ["a", "b", "c"],
+          input: "function fn([ a, b ], [ c ]) { }",
+        },
+        {
+          // #12
+          expected: ["a", "b", "c", "d", "e"],
+          input: "function fn([ a, b ], [ c ], [ d, e ]) { }",
+        },
+        {
+          // #13
+          expected: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"],
+          input: "function fn([ a, [ b ] ], [ c ], [ d, [ e, [ f, [ g, [ h, i], j ] ] ], k ]) { }",
+        },
         // ! Don't test function() {} <-- anonymous. This is transformed by a regex preprocessor
       ].forEach(({ input, expected }, caseNum) => {
         describe(`(#${caseNum}): given the string of a function: '${input}'`, () => {
-          it(`should return an array of strings: [${expected}]`, () => {
-            const actual = new Params(input).parse();
-            // console.log({ input, actual, expected });
-            expect(actual).toEqual(expected);
+          it(`should return an array of unordered strings containing: '${expected}'`, () => {
+            const paramNames = parse(input) as string[]; // false only is no params
+
+            paramNames.forEach((paramName) => {
+              expect(expected).toContain(paramName);
+            });
+            const lenOfResult = paramNames.length;
+            expect(lenOfResult).toBe(expected.length);
+            expect(new Set(paramNames).size).toBe(lenOfResult);
           });
         });
       });
