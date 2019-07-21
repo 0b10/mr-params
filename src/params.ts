@@ -29,8 +29,8 @@ import { File } from "@babel/types";
 
 export class Params implements IParams {
   private ast: File;
-  private rootVisitor: Visitor;
   private paramNames: string[];
+  private rootVisitor: Visitor;
 
   /**
    * Constructor
@@ -42,6 +42,16 @@ export class Params implements IParams {
   constructor(funcStr: string) {
     this.paramNames = [];
     const pushParam = (paramName: string) => this.paramNames.push(paramName);
+
+    const objectPropsVisitor: Visitor = {
+      ObjectProperty(path) {
+        // console.log()
+        const { name } = path.node.value as any; // name has a guard
+        if (name) {
+          pushParam(name);
+        }
+      },
+    };
 
     this.rootVisitor = {
       Function(path: NodePath) {
@@ -59,7 +69,7 @@ export class Params implements IParams {
                 }
                 break;
               case "ObjectPattern":
-                // path.traverse(ObjectPropsVisitor);
+                path.traverse(objectPropsVisitor);
                 break;
               default:
                 break;
