@@ -23,7 +23,7 @@
 //
 //
 
-import { stripBody } from "../../../preprocess";
+import { getBodyStub, stripBody } from "../../../preprocess";
 import { ITestDataStringIO, ITestDataThrows } from "../../interfaces";
 
 export const testStripBody = ({ input, expected }: ITestDataStringIO, caseNum: number) => {
@@ -34,11 +34,29 @@ export const testStripBody = ({ input, expected }: ITestDataStringIO, caseNum: n
   });
 };
 
+export const testGetBodyStub = ({ input, expected }: ITestDataStringIO, caseNum: number) => {
+  describe(`(#${caseNum}): input: '${input}'`, () => {
+    it(`should return the string: '${expected}'`, () => {
+      expect(getBodyStub(input)).toBe(expected);
+    });
+  });
+};
+
 export const testStripBodyThrows = ({ input, expected }: ITestDataThrows, caseNum: number) => {
   describe(`(#${caseNum}): input: '${input}'`, () => {
     it(`should throw a '${expected.name}' with the message: "${expected.message}"`, () => {
       expect(() => {
         stripBody(input);
+      }).toThrow(expected);
+    });
+  });
+};
+
+export const testGetBodyStubThrows = ({ input, expected }: ITestDataThrows, caseNum: number) => {
+  describe(`(#${caseNum}): input: '${input}'`, () => {
+    it(`should throw a '${expected.name}' with the message: "${expected.message}"`, () => {
+      expect(() => {
+        getBodyStub(input);
       }).toThrow(expected);
     });
   });

@@ -66,3 +66,32 @@ export const stripBody = (funcStr: string): string => {
   }
   return funcStr.slice(0, index);
 };
+
+const RE_ARROW_FUNC = /^\(/;
+const RE_FUNCTION_DEFINITION = /^function */;
+/**
+ * Get a stub to replace the stripped out body portion of a function definition string.
+ *
+ * It is assumed that the function definition is in the form: 'function fn(...)', or '(...)'. This function
+ *  just tests the first portion of the string, to determine what kind of function it is, then returns
+ *  an appropriate stub body.
+ * @param funcSubStr - a substring of the function definition string, where the body portion has been
+ *  stripped off.
+ * @returns a string, an appropriate stub to replace the stripped out definition body.
+ * @example
+ * getBodyStub('function fn(a, b, c)')  // " => undefined"
+ * getBodyStub('(a, b, c)')  // " { }"
+ * @throws PreprocessingError - when the definition doesn't match either of the previously mentioned
+ *  patterns.
+ */
+export const getBodyStub = (funcSubStr: string): string => {
+  let stub: string = "";
+  if (RE_ARROW_FUNC.test(funcSubStr)) {
+    stub = " => undefined";
+  } else if (RE_FUNCTION_DEFINITION.test(funcSubStr)) {
+    stub = " { }";
+  } else {
+    throw new PreprocessingError(`Invalid function definition: '${funcSubStr.slice(0, 20)}...'`);
+  }
+  return stub;
+};
