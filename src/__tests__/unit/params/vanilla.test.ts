@@ -26,6 +26,7 @@
 // tslint:disable:no-unused-expression
 
 import { parse } from "../../../params";
+import * as helpers from "../../helpers/params";
 
 describe("Unit Tests: params - vanilla params", () => {
   describe("parse()", () => {
@@ -59,12 +60,6 @@ describe("Unit Tests: params - vanilla params", () => {
         input: "function fn(a, b, c) { }",
       },
       // ! Don't test function() {} <-- anonymous. This is transformed by a regex preprocessor
-    ].forEach(({ input, expected }, caseNum) => {
-      describe(`(#${caseNum}): given the string of a function: '${input}'`, () => {
-        it(`should return an array of strings: ["${expected}"]`, () => {
-          expect(parse(input)).toEqual(expected);
-        });
-      });
-    });
+    ].forEach(helpers.testInputOutput);
   });
 });

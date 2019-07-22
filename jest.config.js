@@ -139,7 +139,7 @@ module.exports = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: [
-    "**/__tests__/**/*.[jt]s?(x)"
+    "**/__tests__/**/*.test.[jt]s?(x)"
     // "**/?(*.)+(spec|test).[tj]s?(x)"
   ],
 
@@ -167,7 +167,7 @@ module.exports = {
   // transform: null,
   transform: {
     ".(ts|tsx)": "ts-jest"
-  }, 
+  }
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [

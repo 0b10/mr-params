@@ -26,24 +26,9 @@
 // tslint:disable:no-unused-expression
 // tslint:disable:max-line-length
 
-import { parse } from "../../../params";
+import * as helpers from "../../helpers/params";
 
 describe("Unit Tests: params - default args", () => {
-  // >>> HELPERS >>>
-  const sortAlpha = (arr: string[]): string[] => arr.sort((a, b) => (a < b ? -1 : 1));
-
-  // >>> TESTING LOGIC >>>
-  const doTest = ({ input, expected }: ITestData, caseNum: number) => {
-    describe(`(#${caseNum}): input: '${input}'`, () => {
-      it(`should return an unordered array of strings, containing exactly: ${expected}`, () => {
-        // The array will be unordered, so sort first
-        const sortedParamNames = sortAlpha(parse(input) as string[]); // parse() shouldn't return boolean
-        const sortedExpected = sortAlpha(expected);
-        expect(sortedParamNames.length).toBe(sortedExpected.length);
-        expect(sortedParamNames).toEqual(sortedExpected);
-      });
-    });
-  };
   // >>> Primitives >>>
   describe("parse()", () => {
     describe("for primitive default args types", () => {
@@ -68,7 +53,7 @@ describe("Unit Tests: params - default args", () => {
           expected: ["a", "b", "c"],
           input: "function fn(a, b = 1, c) {}",
         },
-      ].forEach(doTest);
+      ].forEach(helpers.testInputOutput);
     });
 
     // >>> Functions >>>
@@ -111,7 +96,7 @@ describe("Unit Tests: params - default args", () => {
             expected: ["a", "b", "c"],
             input: "function fn(a, b, c = function() {}) {}",
           },
-        ].forEach(doTest);
+        ].forEach(helpers.testInputOutput);
       });
 
       // ~~~ With Args (inside callback) ~~~
@@ -152,7 +137,7 @@ describe("Unit Tests: params - default args", () => {
             expected: ["a", "b", "c"],
             input: "function fn(a, b, c = function(x, y, z) {}) {}",
           },
-        ].forEach(doTest);
+        ].forEach(helpers.testInputOutput);
       });
 
       // ~~~ Callback-ception ~~~
@@ -164,7 +149,7 @@ describe("Unit Tests: params - default args", () => {
             input:
               "function fn(a = (x = () => undefined, y, z = () => undefined) => undefined, b) {}",
           },
-        ].forEach(doTest);
+        ].forEach(helpers.testInputOutput);
       });
     });
 
@@ -199,7 +184,7 @@ describe("Unit Tests: params - default args", () => {
             input:
               "function fn({a = 1, b: { c: { e : { f: { g = 1} = {} }} } = {} } = {}, { d: { h: { i = 1 } = {}} } = {}) {}",
           },
-        ].forEach(doTest);
+        ].forEach(helpers.testInputOutput);
       });
 
       // ~~~ Array Destructuring ~~~
@@ -231,13 +216,8 @@ describe("Unit Tests: params - default args", () => {
             input:
               "function fn([ a = 1, [[[ [ g = 1] = [] ]]] = [] ] = [], [[ [ i = 1 ] = [] ]] = []) {}",
           },
-        ].forEach(doTest);
+        ].forEach(helpers.testInputOutput);
       });
     });
   });
 });
-
-interface ITestData {
-  input: string;
-  expected: string[];
-}

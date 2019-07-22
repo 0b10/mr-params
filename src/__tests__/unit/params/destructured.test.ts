@@ -26,6 +26,7 @@
 // tslint:disable:no-unused-expression
 
 import { parse } from "../../../params";
+import * as helpers from "../../helpers/params";
 
 describe("Unit Tests: params - destructured params", () => {
   describe("parse()", () => {
@@ -96,20 +97,7 @@ describe("Unit Tests: params - destructured params", () => {
           input: "function fn({a:{ b }}, {c:{ d }}, {e:{f:{g:{ h }}}}) { }",
         },
         // ! Don't test function() {} <-- anonymous. This is transformed by a regex preprocessor
-      ].forEach(({ input, expected }, caseNum) => {
-        describe(`(#${caseNum}): given the string of a function: '${input}'`, () => {
-          it(`should return an array of unordered strings containing: '${expected}'`, () => {
-            const paramNames = parse(input) as string[]; // false only is no params
-
-            paramNames.forEach((paramName) => {
-              expect(expected).toContain(paramName);
-            });
-            const lenOfResult = paramNames.length;
-            expect(lenOfResult).toBe(expected.length);
-            expect(new Set(paramNames).size).toBe(lenOfResult);
-          });
-        });
-      });
+      ].forEach(helpers.testInputOutput);
     });
 
     // >>> ARRAY DESTRUCTURING >>>
@@ -189,20 +177,7 @@ describe("Unit Tests: params - destructured params", () => {
           input: "function fn([ a, [ b ] ], [ c ], [ d, [ e, [ f, [ g, [ h, i], j ] ] ], k ]) { }",
         },
         // ! Don't test function() {} <-- anonymous. This is transformed by a regex preprocessor
-      ].forEach(({ input, expected }, caseNum) => {
-        describe(`(#${caseNum}): given the string of a function: '${input}'`, () => {
-          it(`should return an array of unordered strings containing: '${expected}'`, () => {
-            const paramNames = parse(input) as string[]; // false only is no params
-
-            paramNames.forEach((paramName) => {
-              expect(expected).toContain(paramName);
-            });
-            const lenOfResult = paramNames.length;
-            expect(lenOfResult).toBe(expected.length);
-            expect(new Set(paramNames).size).toBe(lenOfResult);
-          });
-        });
-      });
+      ].forEach(helpers.testInputOutput);
     });
   });
 });
