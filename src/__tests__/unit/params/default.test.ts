@@ -168,35 +168,71 @@ describe("Unit Tests: params - default args", () => {
       });
     });
 
+    // >>> DESTRUCTURING >>>
     describe("default values for destructured args", () => {
-      [
-        // #0 - single
-        {
-          expected: ["a"],
-          input: "function fn({ a = 1 } = {}) {}",
-        },
-        // #1 - two in one
-        {
-          expected: ["a", "b"],
-          input: "function fn({a = 1, b = 1} = {}) {}",
-        },
-        // #2 - multiple
-        {
-          expected: ["a", "b", "c"],
-          input: "function fn({a = 1, b = 1} = {}, { c = 1 } = {}) {}",
-        },
-        // #2 - nested
-        {
-          expected: ["a", "c", "d"],
-          input: "function fn({a = 1, b: { c = 1 } = {} } = {}, { d = 1 } = {}) {}",
-        },
-        // #3 - lost it
-        {
-          expected: ["a", "g", "i"],
-          input:
-            "function fn({a = 1, b: { c: { e : { f: { g = 1} = {} }} } = {} } = {}, { d: { h: { i = 1 } = {}} } = {}) {}",
-        },
-      ].forEach(doTest);
+      // ~~~ Object Destructuring ~~~
+      describe("objects", () => {
+        [
+          // #0 - single
+          {
+            expected: ["a"],
+            input: "function fn({ a = 1 } = {}) {}",
+          },
+          // #1 - two in one
+          {
+            expected: ["a", "b"],
+            input: "function fn({a = 1, b = 1} = {}) {}",
+          },
+          // #2 - multiple
+          {
+            expected: ["a", "b", "c"],
+            input: "function fn({a = 1, b = 1} = {}, { c = 1 } = {}) {}",
+          },
+          // #2 - nested
+          {
+            expected: ["a", "c", "d"],
+            input: "function fn({a = 1, b: { c = 1 } = {} } = {}, { d = 1 } = {}) {}",
+          },
+          // #3 - lost it
+          {
+            expected: ["a", "g", "i"],
+            input:
+              "function fn({a = 1, b: { c: { e : { f: { g = 1} = {} }} } = {} } = {}, { d: { h: { i = 1 } = {}} } = {}) {}",
+          },
+        ].forEach(doTest);
+      });
+
+      // ~~~ Array Destructuring ~~~
+      describe("arrays", () => {
+        [
+          // #0 - single
+          {
+            expected: ["a"],
+            input: "function fn([ a = 1 ] = []) {}",
+          },
+          // #1 - two in one
+          {
+            expected: ["a", "b"],
+            input: "function fn([ a = 1, b = 1 ] = []) {}",
+          },
+          // #2 - multiple
+          {
+            expected: ["a", "b", "c"],
+            input: "function fn([ a = 1, b = 1 ] = {}, [ c = 1 ] = {}) {}",
+          },
+          // #2 - nested
+          {
+            expected: ["a", "c", "d"],
+            input: "function fn([ a = 1, [ c = 1 ] = [] ] = [], [ d = 1 ] = []) {}",
+          },
+          // #3 - lost it
+          {
+            expected: ["a", "g", "i"],
+            input:
+              "function fn([ a = 1, [[[ [ g = 1] = [] ]]] = [] ] = [], [[ [ i = 1 ] = [] ]] = []) {}",
+          },
+        ].forEach(doTest);
+      });
     });
   });
 });
