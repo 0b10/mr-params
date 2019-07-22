@@ -23,43 +23,23 @@
 //
 //
 
-// tslint:disable:no-unused-expression
+import { stripBody } from "../../../preprocess";
+import { ITestDataStringIO, ITestDataThrows } from "../../interfaces";
 
-import { parse } from "../../../params";
-import * as helpers from "./helpers";
-
-describe("Unit Tests: params - vanilla params", () => {
-  describe("parse()", () => {
-    it("return false when there's no params", () => {
-      expect(parse("() => undefined")).toBe(false);
+export const testStripBody = ({ input, expected }: ITestDataStringIO, caseNum: number) => {
+  describe(`(#${caseNum}): input: '${input}'`, () => {
+    it(`should return the string: '${expected}'`, () => {
+      expect(stripBody(input)).toBe(expected);
     });
-
-    [
-      {
-        expected: ["a"],
-        input: "(a) => { }",
-      },
-      {
-        expected: ["a", "b"],
-        input: "(a, b) => { }",
-      },
-      {
-        expected: ["a", "b", "c"],
-        input: "(a, b, c) => { }",
-      },
-      {
-        expected: ["a"],
-        input: "function fn(a) { }",
-      },
-      {
-        expected: ["a", "b"],
-        input: "function fn(a, b) { }",
-      },
-      {
-        expected: ["a", "b", "c"],
-        input: "function fn(a, b, c) { }",
-      },
-      // ! Don't test function() {} <-- anonymous. This is transformed by a regex preprocessor
-    ].forEach(helpers.testInputOutput);
   });
-});
+};
+
+export const testStripBodyThrows = ({ input, expected }: ITestDataThrows, caseNum: number) => {
+  describe(`(#${caseNum}): input: '${input}'`, () => {
+    it(`should throw a '${expected.name}' with the message: "${expected.message}"`, () => {
+      expect(() => {
+        stripBody(input);
+      }).toThrow(expected);
+    });
+  });
+};

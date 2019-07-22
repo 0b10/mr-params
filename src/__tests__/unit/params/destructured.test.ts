@@ -26,7 +26,7 @@
 // tslint:disable:no-unused-expression
 
 import { parse } from "../../../params";
-import * as helpers from "../../helpers/params";
+import * as helpers from "./helpers";
 
 describe("Unit Tests: params - destructured params", () => {
   describe("parse()", () => {

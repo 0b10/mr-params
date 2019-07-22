@@ -23,43 +23,9 @@
 //
 //
 
-// tslint:disable:no-unused-expression
-
-import { parse } from "../../../params";
-import * as helpers from "./helpers";
-
-describe("Unit Tests: params - vanilla params", () => {
-  describe("parse()", () => {
-    it("return false when there's no params", () => {
-      expect(parse("() => undefined")).toBe(false);
-    });
-
-    [
-      {
-        expected: ["a"],
-        input: "(a) => { }",
-      },
-      {
-        expected: ["a", "b"],
-        input: "(a, b) => { }",
-      },
-      {
-        expected: ["a", "b", "c"],
-        input: "(a, b, c) => { }",
-      },
-      {
-        expected: ["a"],
-        input: "function fn(a) { }",
-      },
-      {
-        expected: ["a", "b"],
-        input: "function fn(a, b) { }",
-      },
-      {
-        expected: ["a", "b", "c"],
-        input: "function fn(a, b, c) { }",
-      },
-      // ! Don't test function() {} <-- anonymous. This is transformed by a regex preprocessor
-    ].forEach(helpers.testInputOutput);
-  });
-});
+export class PreprocessingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PreprocessingError";
+  }
+}

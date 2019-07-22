@@ -22,3 +22,11 @@
 // SOFTWARE.
 //
 //
+
+export const getParamNames = (funcRef: (...args: any[]) => any): string[] => {
+  // Preprocessing depends on valid syntax. Ensuring a function reference solves a lot of potential syntax issues.
+  if (typeof funcRef !== "function") {
+    throw new TypeError(`funcRef must be a function reference, not: '${typeof funcRef}'`);
+  }
+  return ["not implemented"];
+};

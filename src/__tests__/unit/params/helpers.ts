@@ -23,7 +23,8 @@
 //
 //
 
-import { parse } from "../../params";
+import { parse } from "../../../params";
+import { ITestDataIO } from "../../interfaces";
 
 // >>> HELPERS >>>
 /**
@@ -48,7 +49,7 @@ export const sortAsc = (arr: string[]): string[] => arr.sort((a, b) => (a < b ? 
  *  }
  * ].forEach(testInputOutput) // Second arg is index: forEach({...}, index)
  */
-export const testInputOutput = ({ input, expected }: ITestData, caseNum: number) => {
+export const testInputOutput = ({ input, expected }: ITestDataIO, caseNum: number) => {
   describe(`(#${caseNum}): input: '${input}'`, () => {
     it(`should return an unordered array of strings, containing only: ${expected}`, () => {
       // The array will be unordered, so sort first
@@ -59,9 +60,3 @@ export const testInputOutput = ({ input, expected }: ITestData, caseNum: number)
     });
   });
 };
-
-// >>> INTERFACES >>>
-export interface ITestData {
-  input: string;
-  expected: string[];
-}

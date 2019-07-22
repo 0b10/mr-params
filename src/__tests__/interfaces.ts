@@ -1,3 +1,5 @@
+import { PreprocessingError } from "../errors";
+
 //
 // MIT License
 //
@@ -23,43 +25,17 @@
 //
 //
 
-// tslint:disable:no-unused-expression
+export interface ITestDataIO {
+  input: string;
+  expected: string[];
+}
 
-import { parse } from "../../../params";
-import * as helpers from "./helpers";
+export interface ITestDataStringIO {
+  input: string;
+  expected: string;
+}
 
-describe("Unit Tests: params - vanilla params", () => {
-  describe("parse()", () => {
-    it("return false when there's no params", () => {
-      expect(parse("() => undefined")).toBe(false);
-    });
-
-    [
-      {
-        expected: ["a"],
-        input: "(a) => { }",
-      },
-      {
-        expected: ["a", "b"],
-        input: "(a, b) => { }",
-      },
-      {
-        expected: ["a", "b", "c"],
-        input: "(a, b, c) => { }",
-      },
-      {
-        expected: ["a"],
-        input: "function fn(a) { }",
-      },
-      {
-        expected: ["a", "b"],
-        input: "function fn(a, b) { }",
-      },
-      {
-        expected: ["a", "b", "c"],
-        input: "function fn(a, b, c) { }",
-      },
-      // ! Don't test function() {} <-- anonymous. This is transformed by a regex preprocessor
-    ].forEach(helpers.testInputOutput);
-  });
-});
+export interface ITestDataThrows {
+  input: string;
+  expected: Error;
+}

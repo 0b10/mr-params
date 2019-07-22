@@ -26,7 +26,7 @@
 // tslint:disable:no-unused-expression
 // tslint:disable:max-line-length
 
-import * as helpers from "../../helpers/params";
+import * as helpers from "./helpers";
 
 describe("Unit Tests: params - default args", () => {
   // >>> Primitives >>>
