@@ -50,7 +50,7 @@ export const sortAsc = (arr: string[]): string[] => arr.sort((a, b) => (a < b ? 
  */
 export const testInputOutput = ({ input, expected }: ITestData, caseNum: number) => {
   describe(`(#${caseNum}): input: '${input}'`, () => {
-    it(`should return an unordered array of strings, containing exactly: ${expected}`, () => {
+    it(`should return an unordered array of strings, containing only: ${expected}`, () => {
       // The array will be unordered, so sort first
       const sortedParamNames = sortAsc(parse(input) as string[]); // parse() shouldn't return boolean
       const sortedExpected = sortAsc(expected);
