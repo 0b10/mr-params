@@ -160,6 +160,165 @@ describe("Unit Tests: preprocess", () => {
       });
     });
 
+    // >>> COMMENTS >>>
+    // These include brackets in comments to ensure parsing isn't broken
+    // (an uncommented orphaned bracket should break parsing)
+    describe(">>> comments", () => {
+      // ~~~ Multi-line Comments ~~~
+      describe("multi-line", () => {
+        [
+          // #0 - closing bracket
+          {
+            expected: "(/* ) */)",
+            input: "(/* ) */) end",
+          },
+          // #1 - double star
+          {
+            expected: "(/** ) **/)",
+            input: "(/** ) **/) end",
+          },
+          // #2 - double star left
+          {
+            expected: "(/** ) */)",
+            input: "(/** ) */) end",
+          },
+          // #3 - double star right
+          {
+            expected: "(/* ) **/)",
+            input: "(/* ) **/) end",
+          },
+          // #3 - lots of stars
+          {
+            expected: "(/*********** ) ***********/)",
+            input: "(/*********** ) ***********/) end",
+          },
+          // #4 - with line breaks
+          {
+            expected: "(/* \n\n)\n\n */)",
+            input: "(/* \n\n)\n\n */) end",
+          },
+          // #5 - with line breaks and tabs
+          {
+            expected: "(/* \n\n\t\t\t)\t\t\t\n\n */)",
+            input: "(/* \n\n\t\t\t)\t\t\t\n\n */) end",
+          },
+          // #6 - with extra args
+          {
+            expected: "(a, b, /* ) */ c)",
+            input: "(a, b, /* ) */ c) end",
+          },
+          // #7 - multiple comments
+          {
+            expected: "(a, b, /* ) */ c, /** ) ** d, /*** ) ***/ e)",
+            input: "(a, b, /* ) */ c, /** ) ** d, /*** ) ***/ e) end",
+          },
+          // #8 - go nuts
+          {
+            expected:
+              "(a, b, c, /**a**s*d*f\n**g*\n4*\n\t4 / / / \t* ) \n**)))) / / /* /* /** //*****/, x, /* ) */ y, /* ) */ z)",
+            input:
+              "(a, b, c, /**a**s*d*f\n**g*\n4*\n\t4 / / / \t* ) \n**)))) / / /* /* /** //*****/, x, /* ) */ y, /* ) */ z) end",
+          },
+        ].forEach(testStripEnds);
+      });
+
+      // ~~~ Double Slash Comments ~~~
+      describe("double slash", () => {
+        [
+          // #0 - simple
+          {
+            expected: "(// )\n)",
+            input: "(// )\n) end",
+          },
+          // #1 - with args
+          {
+            expected: "(a, b, // )\n c)",
+            input: "(a, b, // )\n c) end",
+          },
+          // #2 - multiple comments
+          {
+            expected: "(a, b, // )\n c, // )\n d)",
+            input: "(a, b, // )\n c, // )\n d) end",
+          },
+          // #3 - with nested slashes, and tab chars
+          {
+            expected: "(// )\t\t//\t//\n, // )\t//\t\t//\n)",
+            input: "(// )\t\t//\t//\n, // )\t//\t\t//\n) end",
+          },
+          // #4 - go nuts
+          {
+            expected: "(// )\t\tiuirueiod,mdsd//\t//sddw\n, // )\t//dwdaerd\t\t//\n)",
+            input: "(// )\t\tiuirueiod,mdsd//\t//sddw\n, // )\t//dwdaerd\t\t//\n) end",
+          },
+        ].forEach(testStripEnds);
+      });
+
+      // ~~~ Both (composite) ~~~
+      describe("both (composite)", () => {
+        [
+          // #0 - simple
+          {
+            expected: "(// )\n /* ) */)",
+            input: "(// )\n /* ) */) end",
+          },
+          // #1 - with vars
+          {
+            expected: "(a, b, // )\n c, /* ) */, d)",
+            input: "(a, b, // )\n c, /* ) */, d) end",
+          },
+          // #2 - multiple
+          {
+            expected: "(// )\n /* ) */ // )\n /* ) */)",
+            input: "(// )\n /* ) */ // )\n /* ) */) end",
+          },
+          // #3 - go nuts
+          {
+            expected:
+              "(// hdhqu878//sd*/)dwqdq76\n /*** )s/*hj*/j//*ka//76 ****/ // wueuys6*/)iqwueuy78\n /* duysa87)sda */)",
+            input:
+              "(// hdhqu878//sd*/)dwqdq76\n /*** )s/*hj*/j//*ka//76 ****/ // wueuys6*/)iqwueuy78\n /* duysa87)sda */) end",
+          },
+        ].forEach(testStripEnds);
+      });
+
+      // ~~~ Errors ~~~
+      const commentsErrorMsgPrefix = "Invalid comment declaration:"; // + funcStr.slice(0, 50)
+      describe("errors", () => {
+        [
+          // #0 - incomplete
+          {
+            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/)`),
+            input: "(/)",
+          },
+          // #1 - only open
+          {
+            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/*)`),
+            input: "(/*)",
+          },
+          // #2 - only close
+          {
+            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (*/)`),
+            input: "(*/)",
+          },
+          // #3 - valid open, but no close
+          {
+            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/*//)`),
+            input: "(/*//)",
+          },
+          // #4 invalid open and close, or invalid double slash
+          {
+            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/ /)`),
+            input: "(/ /)",
+          },
+          // #5 - invalid open, valid close
+          {
+            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/ */)`),
+            input: "(/ */)",
+          },
+        ].forEach(testStripEndsThrows);
+      });
+    });
+
     // >>> ERRORS >>>
     const errorMsgPrefix: string = "Invalid function string - the brackets do not match:";
     // ! Don't test these too thoroughly because the composing function will accept a function

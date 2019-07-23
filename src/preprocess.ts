@@ -23,8 +23,12 @@
 //
 //
 
+// tslint:disable:prefer-for-of
+
 import { PreprocessingError } from "./errors";
 
+// Non-global - first match. A full function body will be present, which is costly to parse.
+const RE_ANY_COMMENT = /(^\/\*(?:.|\s)*?\*\/|^\/\/.*)/u; // Comments may contain unicode  - . matches any code point
 /**
  * Strip both ends of the function definition string, leaving only the arguments spec.
  *
@@ -41,20 +45,35 @@ import { PreprocessingError } from "./errors";
  */
 export const stripEnds = (funcStr: string): string => {
   let canary = 0;
-  let index = 0;
   let startIndex: number | undefined;
-  for (const c of funcStr) {
-    if (c === "(") {
+  let index = 0;
+  for (index; index < funcStr.length; index++) {
+    const char = funcStr[index];
+    if (char === "/") {
+      // +++ comments +++
+      // Either it finds a comment, or there's a syntax error.
+      // Parsing the body won't commence because the function should return before then.
+      const commentMatch = funcStr.slice(index).match(RE_ANY_COMMENT);
+      if (commentMatch) {
+        // fast-forward to comment end.
+        // index + length -- the -1 is because the loop will index++ next iter.
+        index += commentMatch[0].length - 1;
+        continue;
+      } else {
+        throw new PreprocessingError(`Invalid comment declaration: ${funcStr.slice(0, 50)}`);
+      }
+    } else if (char === "(") {
+      // +++ open parens +++
       if (startIndex === undefined) {
         // get initial boundary
         startIndex = index;
       }
       canary++; // Push (open)
-    } else if (c === ")") {
+    } else if (char === ")") {
+      // +++ close parens +++
       canary--; // Pop (close)
       if (canary === 0) {
         // End found.
-        index++; // for string slice end, must be desired index +1
         break;
       } else if (canary < 0) {
         throw new PreprocessingError(
@@ -62,7 +81,6 @@ export const stripEnds = (funcStr: string): string => {
         );
       }
     }
-    index++;
   }
 
   // catch cases like (() <-- more open than close
@@ -71,7 +89,7 @@ export const stripEnds = (funcStr: string): string => {
       `Invalid function string - the brackets do not match: '${funcStr}'`,
     );
   }
-  return funcStr.slice(startIndex, index);
+  return funcStr.slice(startIndex, index + 1);
 };
 
 /**
