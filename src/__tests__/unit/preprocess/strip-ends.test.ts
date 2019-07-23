@@ -250,6 +250,67 @@ describe("Unit Tests: preprocess", () => {
             expected: "(// )\t\tiuirueiod,mdsd//\t//sddw\n, // )\t//dwdaerd\t\t//\n)",
             input: "(// )\t\tiuirueiod,mdsd//\t//sddw\n, // )\t//dwdaerd\t\t//\n) end",
           },
+          // #4 - go nuts
+          {
+            expected: "(//////////////// ) \n, a)",
+            input: "(//////////////// ) \n, a) end",
+          },
+        ].forEach(testStripEnds);
+      });
+
+      // ~~~ Regex As Default Arg ~~~
+      describe("regex as default arg", () => {
+        [
+          // #0 - simple
+          {
+            expected: "(a = /foo/)",
+            input: "(a = /foo/) end",
+          },
+          // #1 - with /*
+          {
+            expected: `(a = ${/\/*/})`,
+            input: `(a = ${/\/*/}) end`,
+          },
+          // #2 - with /*.+*/
+          {
+            expected: `(a = ${/\/*.+\*\\/})`,
+            input: `(a = ${/\/*.+\*\\/}) end`,
+          },
+          // #3 - with double slashes
+          {
+            expected: `(a = ${/\/\//})`,
+            input: `(a = ${/\/\//}) end`,
+          },
+          // #4 - with /*foo*/
+          {
+            expected: `(a = ${/\/*foo*\\ /})`,
+            input: `(a = ${/\/*foo*\\ /}) end`,
+          },
+          // #5 - /* with no close
+          {
+            expected: `(a = ${/\/*foo/})`,
+            input: `(a = ${/\/*foo/}) end`,
+          },
+          // #6 - /* with extra args
+          {
+            expected: `(a, b = ${/\/*foo\//}, c)`,
+            input: `(a, b = ${/\/*foo\//}, c) end`,
+          },
+          // #7 - /* with object destructuring
+          {
+            expected: `(a,{  b = ${/\/*foo\//} } = {}, c)`,
+            input: `(a,{  b = ${/\/*foo\//} } = {}, c) end`,
+          },
+          // #8 - /* with array destructuring
+          {
+            expected: `(a, [ b = ${/\/*foo\//} ] = [], c)`,
+            input: `(a, [ b = ${/\/*foo\//} ] = [], c) end`,
+          },
+          // #8 - /* with other comments
+          {
+            expected: `(a, /* ) */ b = ${/\/*foo\//}, // )\n c)`,
+            input: `(a, /* ) */ b = ${/\/*foo\//}, // )\n c) end`,
+          },
         ].forEach(testStripEnds);
       });
 
@@ -279,43 +340,6 @@ describe("Unit Tests: preprocess", () => {
               "(// hdhqu878//sd*/)dwqdq76\n /*** )s/*hj*/j//*ka//76 ****/ // wueuys6*/)iqwueuy78\n /* duysa87)sda */) end",
           },
         ].forEach(testStripEnds);
-      });
-
-      // ~~~ Errors ~~~
-      const commentsErrorMsgPrefix = "Invalid comment declaration:"; // + funcStr.slice(0, 50)
-      describe("errors", () => {
-        [
-          // #0 - incomplete
-          {
-            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/)`),
-            input: "(/)",
-          },
-          // #1 - only open
-          {
-            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/*)`),
-            input: "(/*)",
-          },
-          // #2 - only close
-          {
-            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (*/)`),
-            input: "(*/)",
-          },
-          // #3 - valid open, but no close
-          {
-            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/*//)`),
-            input: "(/*//)",
-          },
-          // #4 invalid open and close, or invalid double slash
-          {
-            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/ /)`),
-            input: "(/ /)",
-          },
-          // #5 - invalid open, valid close
-          {
-            expected: new PreprocessingError(`${commentsErrorMsgPrefix} (/ */)`),
-            input: "(/ */)",
-          },
-        ].forEach(testStripEndsThrows);
       });
     });
 

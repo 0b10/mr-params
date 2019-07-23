@@ -50,6 +50,25 @@ export const stripEnds = (funcStr: string): string => {
   for (index; index < funcStr.length; index++) {
     const char = funcStr[index];
     if (char === "/") {
+      /**
+       * This section warrants explanation.
+       * The regex will match any multiline, or single line comment. The assumptsions made are that
+       *  double slash lines are delineated with a \n - i.e. valid syntax; both are any (unicode)
+       *  char "greedy", and multi-line comment expressions match against invisible chars like \n and \t.
+       *  This allows the engine to match against anything, until a closing statement is found.
+       * If a / is preceeded with a \ e.g. \/ , then it is ignored - all regex forward slashes are escaped,
+       *  so it won't match against regex. This regex guard is nested to prevent excessive string comparison tests at
+       *  the topevel of the loop body.
+       * This function does not throw if it cannot match a slash to a comment, this is how regexes pass. This
+       *  lib will accept a function reference through it's entry point, and so the runtime will validate syntax.
+       * The regex is liberal with the acceptance of excessive stars and slashes, as long as it's a valid
+       *  comment.
+       *
+       */
+      if (funcStr[index - 1] === "\\") {
+        // ignore regex forward slash: foo = /\// <-- double slash
+        continue;
+      }
       // +++ comments +++
       // Either it finds a comment, or there's a syntax error.
       // Parsing the body won't commence because the function should return before then.
@@ -58,10 +77,9 @@ export const stripEnds = (funcStr: string): string => {
         // fast-forward to comment end.
         // index + length -- the -1 is because the loop will index++ next iter.
         index += commentMatch[0].length - 1;
-        continue;
-      } else {
-        throw new PreprocessingError(`Invalid comment declaration: ${funcStr.slice(0, 50)}`);
       }
+      // Don't throw if no match, just assume it's valid syntax. Let the runtime do the work.
+      continue;
     } else if (char === "(") {
       // +++ open parens +++
       if (startIndex === undefined) {
