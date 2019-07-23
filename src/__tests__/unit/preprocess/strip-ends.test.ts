@@ -27,13 +27,13 @@
 // tslint:disable:max-line-length
 
 import { PreprocessingError } from "../../../errors";
-import { stripBody } from "../../../preprocess";
-import { testStripBody, testStripBodyThrows } from "./helpers";
+import { stripEnds } from "../../../preprocess";
+import { testStripEnds, testStripEndsThrows } from "./helpers";
 
 describe("Unit Tests: preprocess", () => {
-  describe("stripBody()", () => {
+  describe("stripEnds()", () => {
     it("should be defined", () => {
-      expect(typeof stripBody).toBe("function");
+      expect(typeof stripEnds).toBe("function");
     });
 
     // >>> ARROW FUNCTIONS >>>
@@ -76,7 +76,7 @@ describe("Unit Tests: preprocess", () => {
           expected: "([a, [b, [ c ]]])",
           input: "([a, [b, [ c ]]]) => undefined",
         },
-      ].forEach(testStripBody);
+      ].forEach(testStripEnds);
     });
 
     // >>> FUNCTION DEFINITIONS >>>
@@ -84,42 +84,42 @@ describe("Unit Tests: preprocess", () => {
       [
         // #0 - simple
         {
-          expected: "function fn()",
+          expected: "()",
           input: "function fn() { return undefined; }",
         },
         // #1 - with args
         {
-          expected: "function fn(a, b, c)",
+          expected: "(a, b, c)",
           input: "function fn(a, b, c) { return undefined; }",
         },
         // #2 - with default args
         {
-          expected: "function fn(a = 1, b = 2, c = 3)",
+          expected: "(a = 1, b = 2, c = 3)",
           input: "function fn(a = 1, b = 2, c = 3) { return undefined; }",
         },
         // #3 - with callbacks are default args
         {
-          expected: "function fn(a = () => undefined, b = () = undefined)",
+          expected: "(a = () => undefined, b = () = undefined)",
           input: "function fn(a = () => undefined, b = () = undefined) { return undefined; }",
         },
         // #4 - nested callbacks as default args
         {
           expected:
-            "function fn(a = (x = () => undefined) => undefined, b = (y = (z = () => undefined) => undefined) = undefined)",
+            "(a = (x = () => undefined) => undefined, b = (y = (z = () => undefined) => undefined) = undefined)",
           input:
             "function fn(a = (x = () => undefined) => undefined, b = (y = (z = () => undefined) => undefined) = undefined) {}",
         },
         // #5 - object destructuring
         {
-          expected: "function fn({ a: {b: { c } } })",
+          expected: "({ a: {b: { c } } })",
           input: "function fn({ a: {b: { c } } }) => undefined",
         },
         // #6 - array destructuring
         {
-          expected: "function fn([a, [b, [ c ]]])",
+          expected: "([a, [b, [ c ]]])",
           input: "function fn([a, [b, [ c ]]]) { }",
         },
-      ].forEach(testStripBody);
+      ].forEach(testStripEnds);
 
       // >>> EXTREME CASES >>>
       // This isn't testing valid javascript, but testing how it handles brackets
@@ -156,7 +156,7 @@ describe("Unit Tests: preprocess", () => {
             input:
               "((abc{}{{(wuey(iroe{{{jd((ue))}((ue{[[\n]]})((jdtrte)))((\n))}}))}\t}))()()(123) end",
           },
-        ].forEach(testStripBody);
+        ].forEach(testStripEnds);
       });
     });
 
@@ -189,7 +189,7 @@ describe("Unit Tests: preprocess", () => {
           expected: new PreprocessingError(`${errorMsgPrefix} '((((((((()))))))) end'`),
           input: "((((((((()))))))) end",
         },
-      ].forEach(testStripBodyThrows);
+      ].forEach(testStripEndsThrows);
     });
   });
 });

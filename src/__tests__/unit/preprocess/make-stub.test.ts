@@ -26,48 +26,33 @@
 // tslint:disable:no-unused-expression
 // tslint:disable:max-line-length
 
-import { PreprocessingError } from "../../../errors";
-import { getBodyStub } from "../../../preprocess";
-import { testGetBodyStub, testGetBodyStubThrows } from "./helpers";
+import { makeStub } from "../../../preprocess";
+import { testMakeStub } from "./helpers";
 
 describe("Unit Tests: preprocess", () => {
-  describe("getBodyStub()", () => {
+  describe("makeStub()", () => {
     it("should be defined", () => {
-      expect(typeof getBodyStub).toBe("function");
+      expect(typeof makeStub).toBe("function");
     });
 
     // >>> SUCCESS >>>
-    // ! It's assumed the end has already been stripped by stripBody()
+    // ! It's assumed the ends have already been stripped by stripEnds()
     [
-      // #0 - arrow function
+      // #0 - without args
       {
-        expected: " => undefined",
+        expected: "function fn() { }",
         input: "()",
       },
-      // #1 - arrow function with args
+      // #1 - with args
       {
-        expected: " => undefined",
+        expected: "function fn(a, b, c) { }",
         input: "(a, b, c)",
       },
-      // #2 - function definition
+      // #2 - with complex args
       {
-        expected: " { }",
-        input: "function fn()",
+        expected: "function fn(a,  { b: { e } }, [ c, [ d ] ] ]) { }",
+        input: "(a,  { b: { e } }, [ c, [ d ] ] ])",
       },
-      // #3 - function definition with args
-      {
-        expected: " { }",
-        input: "function fn(a, b, c)",
-      },
-    ].forEach(testGetBodyStub);
-
-    // >>> ERROR >>>
-    [
-      // #0 - arrow function
-      {
-        expected: new PreprocessingError(`Invalid function definition: 'invalid input...'`),
-        input: "invalid input",
-      },
-    ].forEach(testGetBodyStubThrows);
+    ].forEach(testMakeStub);
   });
 });
