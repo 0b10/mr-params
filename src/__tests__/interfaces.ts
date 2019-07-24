@@ -1,5 +1,3 @@
-import { PreprocessingError } from "../errors";
-
 //
 // MIT License
 //
