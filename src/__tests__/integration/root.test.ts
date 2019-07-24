@@ -228,7 +228,7 @@ describe("Integration Tests: root", () => {
         // #0 - single
         {
           expected: ["a", "b"],
-          input: (a = /\/*foo\./, b: any) => {
+          input: (a = /\/*foo\//, b: any) => {
             const z = 1;
             return z;
           },
@@ -236,7 +236,7 @@ describe("Integration Tests: root", () => {
         // #0 - double
         {
           expected: ["a", "b", "c", "d"],
-          input: (a = /\/*foo\./, b: any, c = /\/*foo\./, d: any) => {
+          input: (a = /\/*foo\//, b: any, c = /\/*foo\//, d: any) => {
             const z = 1;
             return z;
           },
