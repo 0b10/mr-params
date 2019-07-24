@@ -23,8 +23,7 @@
 //
 //
 
-import { parse } from "../../../params";
-import { ITestDataIO } from "../../interfaces";
+import compose, { IOptions } from "../../";
 
 // >>> HELPERS >>>
 /**
@@ -34,29 +33,23 @@ import { ITestDataIO } from "../../interfaces";
  */
 export const sortAsc = (arr: string[]): string[] => arr.sort((a, b) => (a < b ? -1 : 1));
 
-// >>> TESTING LOGIC >>>
-/**
- * Test that the return value from parse() is an expected value. Both the result from parse() and
- *  the expected array are sorted before comparison - so order doesn't matter.
- * @param param0 - An object: { input, expected }, where input is a funcString, and expected is an
- *  unordered array of all symbols (as strings) expected to be returned from parse.
- * @param caseNum - the test case number, this is injected by forEach
- * @example
- * [
- *  {
- *    expected: ["b", "c", "a"] // any order
- *    input: "(a, b, c) => undefined"
- *  }
- * ].forEach(testInputOutput) // Second arg is index: forEach({...}, index)
- */
-export const testInputOutput = ({ input, expected }: ITestDataIO, caseNum: number) => {
+const composeFactory = (options: IOptions | undefined = {}) => compose(options);
+
+// >>> TEST LOGIC >>>
+export const testInputOutput = ({ input, expected, options }: ITestDataRoot, caseNum: number) => {
   describe(`(#${caseNum}): input: '${input}'`, () => {
     it(`should return an unordered array of strings, containing only: ${expected}`, () => {
-      // The array will be unordered, so sort first
-      const sortedParamNames = sortAsc(parse(input) as string[]); // parse() shouldn't return boolean
+      const sortedParamNames = sortAsc(composeFactory(options)(input) as any); // this won't be given a boolean
       const sortedExpected = sortAsc(expected);
       expect(sortedParamNames).toEqual(sortedExpected);
       expect(sortedParamNames.length).toBe(sortedExpected.length);
     });
   });
 };
+
+// >>> INTERFACES >>>
+interface ITestDataRoot {
+  input: (...args: any[]) => any;
+  expected: string[];
+  options?: IOptions;
+}

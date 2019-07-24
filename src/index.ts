@@ -23,10 +23,19 @@
 //
 //
 
-export const getParamNames = (funcRef: (...args: any[]) => any): string[] => {
-  // Preprocessing depends on valid syntax. Ensuring a function reference solves a lot of potential syntax issues.
-  if (typeof funcRef !== "function") {
-    throw new TypeError(`funcRef must be a function reference, not: '${typeof funcRef}'`);
-  }
-  return ["not implemented"];
-};
+import { parse } from "./params";
+import { makeStub, stripEnds } from "./preprocess";
+
+// Factory
+export default function({  }: IOptions) {
+  return (funcRef: (...args: any[]) => any): string[] | boolean => {
+    // Preprocessing depends on valid syntax. Ensuring a function reference solves a lot of potential syntax issues.
+    if (typeof funcRef !== "function") {
+      throw new TypeError(`funcRef must be a function reference, not: '${typeof funcRef}'`);
+    }
+
+    return parse(makeStub(stripEnds(funcRef.toString())));
+  };
+}
+
+export interface IOptions {}
