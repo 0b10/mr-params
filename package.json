@@ -1,6 +1,6 @@
 {
   "name": "mr-params",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Get parameter names from a given function reference",
   "main": "dist/index.js",
   "dependencies": {},

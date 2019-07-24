@@ -23,40 +23,46 @@
 //
 //
 
-import nativeCacheFactory, { ICacheOps } from "./cache";
-import { parse } from "./params";
-import { makeStub, stripEnds } from "./preprocess";
+// tslint:disable:no-unused-expression
+// tslint:disable:max-line-length
+// tslint:disable:no-empty
 
-// Factory
-export default function({
-  cache = true,
-  debug = false,
-  cacheFactory = nativeCacheFactory,
-}: IOptions = {}) {
-  const { get, put } = cacheFactory(debug);
-  return (funcRef: (...args: any[]) => any): string[] | boolean => {
-    // Preprocessing depends on valid syntax. Ensuring a function reference solves a lot of potential syntax issues.
-    if (typeof funcRef !== "function") {
-      throw new TypeError(`funcRef must be a function reference, not: '${typeof funcRef}'`);
-    }
+import compose from "../../..";
+import { ICacheOps } from "../../../cache";
+import { makeCacheFactory, testCache } from "./helpers";
 
-    const stubbedFuncStr = makeStub(stripEnds(funcRef.toString()));
-    if (cache) {
-      const cacheHit = get(stubbedFuncStr);
-      if (cacheHit) {
-        return cacheHit;
-      }
-    }
-    const paramNames = parse(stubbedFuncStr);
-    if (cache) {
-      put(stubbedFuncStr, paramNames);
-    }
-    return paramNames;
-  };
-}
+describe("Integration Tests: root", () => {
+  describe("cache", () => {
+    [
+      // #0 - cache hit
+      {
+        cacheEnabled: true,
+        cacheHit: true,
+        getCalls: 1,
+        putCalls: 0,
+      },
+      // #1 - cache miss
+      {
+        cacheEnabled: true,
+        cacheHit: false,
+        getCalls: 1,
+        putCalls: 1,
+      },
+      // #0 - cache disabled
+      {
+        cacheEnabled: false,
+        cacheHit: false,
+        getCalls: 0,
+        putCalls: 0,
+      },
+    ].forEach(testCache);
 
-export interface IOptions {
-  cache?: boolean;
-  cacheFactory?: (debug: boolean) => ICacheOps;
-  debug?: boolean;
-}
+    it("should be enabed by default", () => {
+      const { mockCacheFactory, mockGet, mockPut } = makeCacheFactory(false);
+      const parse = compose({ debug: true, cacheFactory: mockCacheFactory });
+      parse(() => undefined);
+      expect(mockGet.mock.calls.length).toBe(1);
+      expect(mockPut.mock.calls.length).toBe(1);
+    });
+  });
+});

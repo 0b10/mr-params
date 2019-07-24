@@ -51,7 +51,7 @@ export default (debug = false): ICacheOps => {
    * @example put("foo", ["a", "b", "c"]) // => undefined
    * @throws CacheDebugError if debug === true, and the key already exists in the cache.
    */
-  const put = (key: string, val: string[]) => {
+  const put = (key: string, val: string[] | boolean) => {
     if (debug && cache[key] !== undefined) {
       throw new CacheDebugError(
         `The key already exists in the cache: k:'${key}', v:'${cache[key]}'`,
@@ -73,10 +73,10 @@ export class CacheDebugError extends Error {
 
 // >>> INTERFACES >>>
 interface ICache {
-  [key: string]: string[];
+  [key: string]: string[] | boolean;
 }
 
-interface ICacheOps {
+export interface ICacheOps {
   get: (key: string) => string[] | boolean;
-  put: (key: string, val: string[]) => void;
+  put: (key: string, val: string[] | boolean) => void;
 }

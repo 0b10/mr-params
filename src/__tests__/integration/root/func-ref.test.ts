@@ -26,28 +26,16 @@
 // tslint:disable:no-unused-expression
 // tslint:disable:max-line-length
 
-import compose from "../../";
+import compose from "../../..";
 import { testInputOutput } from "./helpers";
 
 describe("Integration Tests: root", () => {
-  // >>> FACTORY >>>
-  describe("factory", () => {
-    it("should be defined", () => {
-      expect(typeof compose).toBe("function");
-    });
-
-    it("should return a function", () => {
-      expect(typeof composeFactory()).toBe("function");
-    });
-  });
-
-  // >>> INNER FUNCTION >>>
   describe("the inner function", () => {
     it("should function for a simple case", () => {
       expect(composeFactory()(() => undefined)).toBe(false);
     });
 
-    // ~~~ Simple Args ~~~
+    // >>> Simple Args >>>
     describe(">>> simple args", () => {
       [
         // #0 - single arg
@@ -74,7 +62,7 @@ describe("Integration Tests: root", () => {
       ].forEach(testInputOutput);
     });
 
-    // ~~~ Args With Callbacks ~~~
+    // >>> Args With Callbacks >>>
     describe(">>> args with callbacks", () => {
       [
         // #0 - single callback
@@ -107,7 +95,7 @@ describe("Integration Tests: root", () => {
       ].forEach(testInputOutput);
     });
 
-    // ~~~ Object Destructuring ~~~
+    // >>> Object Destructuring >>>
     describe(">>> object destructuring", () => {
       [
         // #0 - simple
@@ -141,7 +129,7 @@ describe("Integration Tests: root", () => {
       ].forEach(testInputOutput);
     });
 
-    // ~~~ Array Destructuring ~~~
+    // >>> Array Destructuring >>>
     describe(">>> array destructuring", () => {
       [
         // #0 - simple
@@ -171,7 +159,7 @@ describe("Integration Tests: root", () => {
       ].forEach(testInputOutput);
     });
 
-    // ~~~ Comments ~~~
+    // >>> Comments >>>
     describe(">>> comments", () => {
       [
         // #0 - simple double slash
@@ -222,7 +210,7 @@ describe("Integration Tests: root", () => {
       ].forEach(testInputOutput);
     });
 
-    // ~~~ Regex ~~~
+    // >>> Regex >>>
     describe(">>> regex", () => {
       [
         // #0 - single
@@ -244,7 +232,7 @@ describe("Integration Tests: root", () => {
       ].forEach(testInputOutput);
     });
 
-    // ~~~ Mixed Args ~~~
+    // >>> Mixed Args >>>
     describe(">>> mixed args", () => {
       [
         // #0 - everything
