@@ -23,6 +23,8 @@
 //
 //
 
+// tslint:disable:forin
+
 import { parse as babelParse } from "@babel/parser";
 import traverse, { NodePath } from "@babel/traverse";
 
@@ -30,7 +32,20 @@ export const parse = (funcStr: string): string[] | boolean => {
   let paramNames: string[] = [];
   traverse(babelParse(funcStr), {
     Function(path: NodePath) {
-      paramNames = Object.keys(path.scope.bindings);
+      const { bindings } = path.scope;
+      const identifiers = [];
+
+      for (const key in bindings) {
+        // keys are not own properties, don't filter
+        const { start } = bindings[key].identifier; // Symbol position (row/column agnostic)
+        identifiers.push({ name: key, pos: start });
+      }
+
+      // sorts asc, then map to names array
+      paramNames = identifiers
+        .sort(({ pos: posA }, { pos: posB }) => (posA && posB ? posA - posB : 0)) // pos may be null (TS), do nothing
+        .map(({ name }) => name);
+
       path.skip();
     },
   });

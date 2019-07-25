@@ -55,7 +55,7 @@ describe("parse()", () => {
       {
         expected: ["a", "b", "c", "d", "v"],
         input:
-          "function fn(a = (x, y = () => undefined, z) => undefined, [ b, [ d ] ], { c }, v) {}",
+          "function fn(a = (x, y = () => undefined, z) => undefined, [ b, [ c ] ], { d }, v) {}",
       },
       // #5 - all of the above, with nested object and array destructuring
       {

@@ -26,13 +26,6 @@
 import compose, { IOptions } from "../../..";
 
 // >>> HELPERS >>>
-/**
- * Sort an array in ascending order, typically an array of strings.
- * @param arr - The array to sort, each item must be comparible with comparison operators - i.e: <
- * @example sortAsc(["c", "b", "a"]);  // => ["a", "b", "c"]
- */
-export const sortAsc = (arr: string[]): string[] => arr.sort((a, b) => (a < b ? -1 : 1));
-
 // Disable cache by default to avoid any potential issues in other tests
 export const composeFactory = (options: IOptions | undefined = { cache: false, debug: false }) =>
   compose(options);
@@ -64,11 +57,10 @@ export const makeCacheFactory = (cacheHit: boolean) => {
 // >>> TEST LOGIC >>>
 export const testInputOutput = ({ input, expected, options }: ITestDataRoot, caseNum: number) => {
   describe(`(#${caseNum}): input: '${input}'`, () => {
-    it(`should return an unordered array of strings, containing only: ${expected}`, () => {
-      const sortedParamNames = sortAsc(composeFactory(options)(input) as any); // this won't be given a boolean
-      const sortedExpected = sortAsc(expected);
-      expect(sortedParamNames).toEqual(sortedExpected);
-      expect(sortedParamNames.length).toBe(sortedExpected.length);
+    it(`should return an ordered array of strings, containing only: ${expected}`, () => {
+      const result = composeFactory(options)(input) as any;
+      expect(result).toEqual(expected);
+      expect(result.length).toBe(expected.length);
     });
   });
 };
