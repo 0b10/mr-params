@@ -23,31 +23,23 @@
 //
 //
 
-// tslint:disable:forin
-
-import { parse as babelParse } from "@babel/parser";
-import traverse, { NodePath } from "@babel/traverse";
-
-export const parse = (funcStr: string): string[] | false => {
-  let paramNames: string[] = [];
-  traverse(babelParse(funcStr), {
-    Function(path: NodePath) {
-      const { bindings } = path.scope;
-      const identifiers = [];
-
-      for (const key in bindings) {
-        // keys are not own properties, don't filter
-        const { start } = bindings[key].identifier; // Symbol position (row/column agnostic)
-        identifiers.push({ name: key, pos: start });
-      }
-
-      // sorts asc, then map to names array
-      paramNames = identifiers
-        .sort(({ pos: posA }, { pos: posB }) => (posA && posB ? posA - posB : 0)) // pos may be null (TS), do nothing
-        .map(({ name }) => name);
-
-      path.skip();
-    },
+export const wrap = (wrapWith: any[], paramNames: string[]): IWrapper => {
+  if (wrapWith.length !== paramNames.length) {
+    // paramNames as string[] has a guard
+    throw new RangeError(
+      `wrapWith.length (${wrapWith.length}) should match the number of returned parameters (${
+        (paramNames as string[]).length
+      }), cannot wrap`,
+    );
+  }
+  const wrapper: IWrapper = {};
+  wrapWith.forEach((value: any, index: number) => {
+    const key = paramNames[index];
+    wrapper[key] = value;
   });
-  return paramNames.length > 0 ? paramNames : false;
+  return wrapper;
 };
+
+export interface IWrapper {
+  [key: string]: any;
+}

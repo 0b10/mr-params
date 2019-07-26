@@ -28,10 +28,10 @@
 // tslint:disable:no-empty
 
 import compose from "../../..";
-import { ICacheOps } from "../../../cache";
 import { makeCacheFactory, testCache } from "./helpers";
 
 describe("Integration Tests: root", () => {
+  // FIXME: do test with wrapWith
   describe("cache", () => {
     [
       // #0 - cache hit

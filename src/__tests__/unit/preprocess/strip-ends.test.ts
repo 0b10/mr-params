@@ -374,5 +374,35 @@ describe("Unit Tests: preprocess", () => {
         },
       ].forEach(testStripEndsThrows);
     });
+
+    // >>> REAL FUNCTION DEFINITIONS >>>
+    const noArgs = () => undefined;
+    const oneArg = (a: any) => undefined;
+    const twoArgs = (a: any, b: any) => undefined;
+    const threeArgs = (a: any, b: any, c: any) => undefined;
+    describe(">>> for arrow functions", () => {
+      [
+        // #0 - no args
+        {
+          expected: "()",
+          input: noArgs.toString(),
+        },
+        // #1 - one arg
+        {
+          expected: "(a)",
+          input: oneArg.toString(),
+        },
+        // #2 - two args
+        {
+          expected: "(a, b)",
+          input: twoArgs.toString(),
+        },
+        // #2 - two args
+        {
+          expected: "(a, b, c)",
+          input: threeArgs.toString(),
+        },
+      ].forEach(testStripEnds);
+    });
   });
 });

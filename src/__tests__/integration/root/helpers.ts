@@ -24,6 +24,7 @@
 //
 
 import compose, { IOptions } from "../../..";
+import { IWrapper } from "../../../helpers";
 
 // >>> HELPERS >>>
 // Disable cache by default to avoid any potential issues in other tests
@@ -44,7 +45,7 @@ export const composeFactory = (options: IOptions | undefined = { cache: false, d
  * expect(mockGet.mock.calls.length)...
  */
 export const makeCacheFactory = (cacheHit: boolean) => {
-  const mockGet = jest.fn(() => (cacheHit ? ["a"] : false));
+  const mockGet = jest.fn(() => (cacheHit ? ["a"] : undefined)); // must be undefined for cache miss
   const mockPut = jest.fn(() => undefined);
 
   const mockCacheFactory = jest.fn(() => {
@@ -55,12 +56,47 @@ export const makeCacheFactory = (cacheHit: boolean) => {
 };
 
 // >>> TEST LOGIC >>>
-export const testInputOutput = ({ input, expected, options }: ITestDataRoot, caseNum: number) => {
-  describe(`(#${caseNum}): input: '${input}'`, () => {
-    it(`should return an ordered array of strings, containing only: ${expected}`, () => {
-      const result = composeFactory(options)(input) as any;
+export const testInputOutput = (
+  { input: { funcRef, wrapWith }, expected, options }: ITestDataRoot,
+  caseNum: number,
+) => {
+  describe(`(#${caseNum}): given funcRef: '${funcRef}, wrapWith: ${wrapWith}, and options: ${options}'`, () => {
+    it(`should return an ordered array of strings, containing only: ${expected.toString()}`, () => {
+      const result = composeFactory(options)(funcRef, wrapWith) as any;
       expect(result).toEqual(expected);
-      expect(result.length).toBe(expected.length);
+    });
+  });
+};
+
+export const testWrapStateChange = (
+  {
+    expectedAfter,
+    expectedBefore,
+    funcRef,
+    wrapWithAfter,
+    wrapWithBefore,
+    options,
+  }: ITestDataWrapStateChange,
+  caseNum: number,
+) => {
+  describe(`(#${caseNum}): given the following args: ${{
+    expectedAfter,
+    expectedBefore,
+    funcRef,
+    options,
+    wrapWithAfter,
+    wrapWithBefore,
+  }}'`, () => {
+    it(`should wrap results even if they have been cached. Expected: ${{
+      expectedAfter,
+      expectedBefore,
+    }}`, () => {
+      const parse = composeFactory(options);
+      const resultBefore = parse(funcRef, wrapWithBefore);
+      const resultAfter = parse(funcRef, wrapWithAfter);
+
+      expect(resultBefore).toEqual(expectedBefore);
+      expect(resultAfter).toEqual(expectedAfter);
     });
   });
 };
@@ -87,7 +123,8 @@ export const testCache = (
         cacheFactory: mockCacheFactory,
         debug: true,
       });
-      parse(() => undefined);
+      parse(() => undefined); // FIXME: (a) => undefined results in unexpected token error
+      // FIXME: add arg and accept tests for wrapWith
       expect(mockGet.mock.calls.length).toBe(getCalls);
       expect(mockPut.mock.calls.length).toBe(putCalls);
     });
@@ -96,8 +133,8 @@ export const testCache = (
 
 // >>> INTERFACES >>>
 interface ITestDataRoot {
-  input: (...args: any[]) => any;
-  expected: string[];
+  input: IParseArgs;
+  expected: string[] | IWrapper;
   options?: IOptions;
 }
 
@@ -106,4 +143,18 @@ interface ICacheTestData {
   cacheHit: boolean;
   getCalls: number;
   putCalls: number;
+}
+
+interface IParseArgs {
+  funcRef: (...args: any[]) => any;
+  wrapWith?: any[];
+}
+
+interface ITestDataWrapStateChange {
+  funcRef: (...args: any[]) => any;
+  wrapWithAfter: any[] | undefined;
+  wrapWithBefore: any[] | undefined;
+  expectedAfter: IWrapper | string[] | boolean;
+  expectedBefore: IWrapper | string[] | boolean;
+  options: IOptions;
 }

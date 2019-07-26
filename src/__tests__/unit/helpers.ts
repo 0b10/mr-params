@@ -23,31 +23,39 @@
 //
 //
 
-// tslint:disable:forin
+import { wrap } from "../../helpers";
 
-import { parse as babelParse } from "@babel/parser";
-import traverse, { NodePath } from "@babel/traverse";
-
-export const parse = (funcStr: string): string[] | false => {
-  let paramNames: string[] = [];
-  traverse(babelParse(funcStr), {
-    Function(path: NodePath) {
-      const { bindings } = path.scope;
-      const identifiers = [];
-
-      for (const key in bindings) {
-        // keys are not own properties, don't filter
-        const { start } = bindings[key].identifier; // Symbol position (row/column agnostic)
-        identifiers.push({ name: key, pos: start });
-      }
-
-      // sorts asc, then map to names array
-      paramNames = identifiers
-        .sort(({ pos: posA }, { pos: posB }) => (posA && posB ? posA - posB : 0)) // pos may be null (TS), do nothing
-        .map(({ name }) => name);
-
-      path.skip();
-    },
+export const testWrap = ({ wrapWith, paramNames, expected }: ITestDataWrap, caseNum?: number) => {
+  const num = caseNum !== undefined ? `(#${caseNum}): ` : "";
+  describe(`${num}given wrapWith: [${wrapWith}], and paraNames: [${paramNames}]`, () => {
+    it(`should return an object equalling: ${expected}`, () => {
+      expect(wrap(wrapWith, paramNames)).toEqual(expected);
+    });
   });
-  return paramNames.length > 0 ? paramNames : false;
 };
+
+export const testWrapThrows = ({ wrapWith, paramNames }: ITestDataWrapThrows, caseNum?: number) => {
+  const num = caseNum !== undefined ? `(#${caseNum}): ` : "";
+  describe(`${num}given wrapWith: [${wrapWith}], and paraNames: [${paramNames}]`, () => {
+    it(`should throw: RangeError`, () => {
+      expect(() => {
+        wrap(wrapWith, paramNames);
+      }).toThrow(RangeError);
+    });
+  });
+};
+
+export interface ITestDataWrap {
+  wrapWith: any[];
+  paramNames: string[];
+  expected: IWrapResult;
+}
+
+export interface ITestDataWrapThrows {
+  wrapWith: any[];
+  paramNames: string[];
+}
+
+interface IWrapResult {
+  [key: string]: any;
+}

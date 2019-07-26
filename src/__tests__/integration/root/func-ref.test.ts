@@ -41,22 +41,28 @@ describe("Integration Tests: root", () => {
         // #0 - single arg
         {
           expected: ["a"],
-          input: (a: any) => undefined,
+          input: {
+            funcRef: (a: any) => undefined,
+          },
         },
         // #1 - body has symbol (in scope, and returned unless string is stripped)
         {
           expected: ["a"],
-          input: (a: any) => {
-            const b = 1;
-            return b;
+          input: {
+            funcRef: (a: any) => {
+              const b = 1;
+              return b;
+            },
           },
         },
         // #2 - multiple args
         {
           expected: ["a", "b", "c"],
-          input: (a: any, b: any, c: any) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (a: any, b: any, c: any) => {
+              const z = 1;
+              return z;
+            },
           },
         },
       ].forEach(testInputOutput);
@@ -68,28 +74,34 @@ describe("Integration Tests: root", () => {
         // #0 - single callback
         {
           expected: ["a"],
-          input: (a = (b: any, c: any, d: any) => undefined) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (a = (b: any, c: any, d: any) => undefined) => {
+              const z = 1;
+              return z;
+            },
           },
         },
         // #1 - nested callback
         {
           expected: ["a"],
-          input: (a = (b = (c: any) => undefined) => undefined) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (a = (b = (c: any) => undefined) => undefined) => {
+              const z = 1;
+              return z;
+            },
           },
         },
         // #2 - multiple nested callbacks
         {
           expected: ["a", "d"],
-          input: (
-            a = (b = (c: any) => undefined) => undefined,
-            d = (e = (f: any) => undefined) => undefined,
-          ) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (
+              a = (b = (c: any) => undefined) => undefined,
+              d = (e = (f: any) => undefined) => undefined,
+            ) => {
+              const z = 1;
+              return z;
+            },
           },
         },
       ].forEach(testInputOutput);
@@ -101,29 +113,35 @@ describe("Integration Tests: root", () => {
         // #0 - simple
         {
           expected: ["a"],
-          input: ({ a }: any) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: ({ a }: any) => {
+              const z = 1;
+              return z;
+            },
           },
         },
         // #1 - nested
         {
           expected: ["c"],
-          input: ({
-            a: {
-              b: { c },
+          input: {
+            funcRef: ({
+              a: {
+                b: { c },
+              },
+            }: any) => {
+              const z = 1;
+              return z;
             },
-          }: any) => {
-            const z = 1;
-            return z;
           },
         },
         // #2 - multiple, nested
         {
           expected: ["b", "d"],
-          input: ({ a: { b } }: any, { c: { d } }: any) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: ({ a: { b } }: any, { c: { d } }: any) => {
+              const z = 1;
+              return z;
+            },
           },
         },
       ].forEach(testInputOutput);
@@ -135,25 +153,31 @@ describe("Integration Tests: root", () => {
         // #0 - simple
         {
           expected: ["a"],
-          input: ([a]: any) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: ([a]: any) => {
+              const z = 1;
+              return z;
+            },
           },
         },
         // #1 - nested
         {
           expected: ["a", "b", "c"],
-          input: ([a, [b, [c]]]: any) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: ([a, [b, [c]]]: any) => {
+              const z = 1;
+              return z;
+            },
           },
         },
         // #2 - multiple, nested
         {
           expected: ["a", "b", "c", "d", "e", "f"],
-          input: ([a, [b, [c]]]: any, [d, [e, [f]]]: any) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: ([a, [b, [c]]]: any, [d, [e, [f]]]: any) => {
+              const z = 1;
+              return z;
+            },
           },
         },
       ].forEach(testInputOutput);
@@ -165,46 +189,54 @@ describe("Integration Tests: root", () => {
         // #0 - simple double slash
         {
           expected: ["a"],
-          input: (
-            a: any, // )comment
-          ) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (
+              a: any, // )comment
+            ) => {
+              const z = 1;
+              return z;
+            },
           },
         },
         // #1 - double double slash
         {
           expected: ["a", "b"],
-          input: (
-            a: any, // )comment
-            b: any, // )comment
-          ) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (
+              a: any, // )comment
+              b: any, // )comment
+            ) => {
+              const z = 1;
+              return z;
+            },
           },
         },
         // #2 - single multiline
         {
           expected: ["a", "b"],
-          input: (
-            a: any,
-            /* )comment */
-            b: any, /* )comment */
-          ) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (
+              a: any,
+              /* )comment */
+              b: any, /* )comment */
+            ) => {
+              const z = 1;
+              return z;
+            },
           },
         },
         // #2 - mixed
         {
           expected: ["a", "b"],
-          input: (
-            a: any,
-            /* )comment */
-            b: any, // ) comment
-          ) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (
+              a: any,
+              /* )comment */
+              b: any, // ) comment
+            ) => {
+              const z = 1;
+              return z;
+            },
           },
         },
       ].forEach(testInputOutput);
@@ -216,17 +248,21 @@ describe("Integration Tests: root", () => {
         // #0 - single
         {
           expected: ["a", "b"],
-          input: (a = /\/*foo\//, b: any) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (a = /\/*foo\//, b: any) => {
+              const z = 1;
+              return z;
+            },
           },
         },
         // #0 - double
         {
           expected: ["a", "b", "c", "d"],
-          input: (a = /\/*foo\//, b: any, c = /\/*foo\//, d: any) => {
-            const z = 1;
-            return z;
+          input: {
+            funcRef: (a = /\/*foo\//, b: any, c = /\/*foo\//, d: any) => {
+              const z = 1;
+              return z;
+            },
           },
         },
       ].forEach(testInputOutput);
@@ -238,19 +274,21 @@ describe("Integration Tests: root", () => {
         // #0 - everything
         {
           expected: ["a", "b", "c", "d", "e", "f"],
-          input: (
-            a = /\/*foo\//,
-            b = (x: any, y: any) => undefined /** )comment */,
-            c = 1,
-            { j: { d } }: any,
-            /*** )comment *****/
-            [e, [f]]: any, // )comment
-          ) => {
-            const z = (foo: any, bar: any, baz: any) => [foo, bar, baz];
-            const n = {
-              foobar: 1,
-            };
-            return [z, n];
+          input: {
+            funcRef: (
+              a = /\/*foo\//,
+              b = (x: any, y: any) => undefined /** )comment */,
+              c = 1,
+              { j: { d } }: any,
+              /*** )comment *****/
+              [e, [f]]: any, // )comment
+            ) => {
+              const z = (foo: any, bar: any, baz: any) => [foo, bar, baz];
+              const n = {
+                foobar: 1,
+              };
+              return [z, n];
+            },
           },
         },
       ].forEach(testInputOutput);

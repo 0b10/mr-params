@@ -40,17 +40,17 @@ describe("Unit Tests: cache", () => {
   });
 
   describe("cache function", () => {
-    it("should return false when a given key isn't present", () => {
+    it("should return undefined when a given key isn't present", () => {
       const { get } = factory();
-      expect(get("function fn() {}")).toBe(false);
+      expect(get("function fn() {}")).toBe(undefined);
     });
 
     it("should put the key, and return a result on the second call", () => {
       const { get, put } = factory();
       const key = "function fn() {}";
-      expect(get(key)).toBe(false);
-      put(key, []);
-      expect(get("function fn() {}")).toEqual([]);
+      expect(get(key)).toBe(undefined);
+      put(key, false);
+      expect(get("function fn() {}")).toEqual(false);
     });
 
     it("should put multiple values, and return the correct results", () => {
@@ -62,14 +62,14 @@ describe("Unit Tests: cache", () => {
       ];
 
       keys.forEach(({ key, value }) => {
-        expect(get(key)).toBe(false);
+        expect(get(key)).toBe(undefined);
         put(key, value);
         expect(get(key)).toEqual(value);
       });
     });
 
     it("should throw when debug === true, a key is inserted more than once", () => {
-      const { get, put } = factory(true);
+      const { put } = factory(true);
       put("() => undefined", []);
       expect(() => {
         put("() => undefined", []);
