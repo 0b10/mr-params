@@ -107,7 +107,20 @@ export const stripEnds = (funcStr: string): string => {
       `Invalid function string - the brackets do not match: '${funcStr}'`,
     );
   }
-  return funcStr.slice(startIndex, index + 1);
+
+  const result = funcStr.slice(startIndex, index + 1);
+
+  // BUG: a random bug occurs where '(a) => undefined' becomes 'a => undefined' - possibly at compile time.
+  // defensively check for parantheses
+  const firstChar = result[0];
+  const lastChar = result[result.length - 1];
+  if (firstChar !== "(" || lastChar !== ")") {
+    throw new PreprocessingError(
+      "The stripEnds() result should be enclosed in parantheses, but it's not",
+    );
+  }
+
+  return result;
 };
 
 /**

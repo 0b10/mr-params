@@ -48,12 +48,28 @@ describe("Integration Tests: root", () => {
         getCalls: 1,
         putCalls: 1,
       },
-      // #0 - cache disabled
+      // #2 - cache disabled
       {
         cacheEnabled: false,
         cacheHit: false,
         getCalls: 0,
         putCalls: 0,
+      },
+      // #2 - use wrapWith miss
+      {
+        cacheEnabled: true,
+        cacheHit: false,
+        getCalls: 1,
+        putCalls: 1,
+        wrapWith: true,
+      },
+      // #2 - use wrapWith hit
+      {
+        cacheEnabled: true,
+        cacheHit: true,
+        getCalls: 1,
+        putCalls: 0,
+        wrapWith: true,
       },
     ].forEach(testCache);
 

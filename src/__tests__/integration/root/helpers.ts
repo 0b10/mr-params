@@ -109,7 +109,7 @@ export const testWrapStateChange = (
  * @example [{...}: ICacheData].forEach(testCache)
  */
 export const testCache = (
-  { cacheEnabled, cacheHit, getCalls, putCalls }: ICacheTestData,
+  { cacheEnabled, cacheHit, getCalls, putCalls, wrapWith }: ICacheTestData,
   caseNum?: number,
 ) => {
   const num = caseNum !== undefined ? "(#" + caseNum + "): " : ""; // '(#num): ' or ""
@@ -123,8 +123,7 @@ export const testCache = (
         cacheFactory: mockCacheFactory,
         debug: true,
       });
-      parse(() => undefined); // FIXME: (a) => undefined results in unexpected token error
-      // FIXME: add arg and accept tests for wrapWith
+      parse((a) => undefined, wrapWith ? ["a"] : undefined);
       expect(mockGet.mock.calls.length).toBe(getCalls);
       expect(mockPut.mock.calls.length).toBe(putCalls);
     });
@@ -143,6 +142,7 @@ interface ICacheTestData {
   cacheHit: boolean;
   getCalls: number;
   putCalls: number;
+  wrapWith?: boolean;
 }
 
 interface IParseArgs {

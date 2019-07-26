@@ -372,6 +372,13 @@ describe("Unit Tests: preprocess", () => {
           expected: new PreprocessingError(`${errorMsgPrefix} '((((((((()))))))) end'`),
           input: "((((((((()))))))) end",
         },
+        // #4 - no parens
+        {
+          expected: new PreprocessingError(
+            "The stripEnds() result should be enclosed in parantheses, but it's not",
+          ),
+          input: "a => undefined",
+        },
       ].forEach(testStripEndsThrows);
     });
 

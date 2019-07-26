@@ -26,7 +26,7 @@
 // tslint:disable:prefer-const
 
 import nativeCacheFactory, { ICacheOps } from "./cache";
-import { IWrapper, wrap } from "./helpers";
+import { checkCache, IWrapper, wrap } from "./helpers";
 import { parse } from "./params";
 import { makeStub, stripEnds } from "./preprocess";
 
@@ -68,43 +68,6 @@ export default function({
     return paramNames;
   };
 }
-
-/**
- * A helper function to clean up the logic in the main function.
- * @param cache - A boolean, enabled or disabled.
- * @param key - The lookup key.
- * @param get - The cache lookup function.
- * @param wrapWith - an array of values to wrap the results with.
- * @returns undefined if the loookup was unsuccessful, or string[]|false are valid cache hit values to be
- *  returned. You must explicitly check for undefined for a cache miss.
- * @example
- * const result = checkCache(true, "(a) => undefined", get, [1])
- * if (result !== undefined) {
- *  return result;
- * } // => {a: 1}
- */
-const checkCache = (
-  cache: boolean,
-  key: string,
-  get: (key: string) => false | string[] | undefined,
-  wrapWith: any[],
-): false | undefined | IWrapper => {
-  if (cache) {
-    const cacheHit = get(key);
-    if (cacheHit) {
-      // +++ wrapped +++
-      if (wrapWith.length > 0 && cacheHit) {
-        return wrap(wrapWith, cacheHit as string[]); // cacheHit will be arr len > 0
-      }
-      // +++ not wrapped +++
-      return cacheHit; // will return false or string[]
-    } else if (cacheHit === false) {
-      // Values can be explicit false (parse(): no args), return it to avoid the AST generation below.
-      return cacheHit;
-    }
-    // cacheHit undefined (miss) should fall through here
-  }
-};
 
 export interface IOptions {
   cache?: boolean;
