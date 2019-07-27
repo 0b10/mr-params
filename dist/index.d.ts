@@ -6,3 +6,4 @@ export interface IOptions {
     cacheFactory?: (debug: boolean) => ICacheOps;
     debug?: boolean;
 }
+export { ICacheOps } from "./cache";

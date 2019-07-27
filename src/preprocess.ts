@@ -115,6 +115,7 @@ export const stripEnds = (funcStr: string): string => {
   const firstChar = result[0];
   const lastChar = result[result.length - 1];
   if (firstChar !== "(" || lastChar !== ")") {
+    console.log(result);
     throw new PreprocessingError(
       "The stripEnds() result should be enclosed in parantheses, but it's not",
     );

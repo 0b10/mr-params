@@ -1,24 +1,14 @@
 {
   "name": "mr-params",
-  "version": "0.2.1",
-  "description": "Get parameter names from a given function reference",
+  "version": "0.2.2",
+  "description": "Get parameter names from a given function reference, optionally caching the results.",
   "main": "dist/index.js",
   "dependencies": {
-    "@babel/cli": "^7.5.0",
-    "@babel/core": "^7.5.4",
-    "@babel/parser": "^7.5.0",
-    "@babel/plugin-proposal-class-properties": "^7.5.0",
-    "@babel/plugin-proposal-decorators": "^7.4.4",
-    "@babel/plugin-proposal-numeric-separator": "^7.2.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
-    "@babel/preset-env": "^7.5.4",
-    "@babel/preset-typescript": "^7.3.3",
-    "@babel/types": "^7.5.0",
-    "@types/jest": "^24.0.15",
-    "@types/node": "^12.6.7"
+    "@babel/parser": "^7.5.5",
+    "@babel/traverse": "^7.5.5"
   },
   "devDependencies": {
-    "babel-jest": "^24.8.0",
+    "@types/jest": "^24.0.15",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
