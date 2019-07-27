@@ -1,0 +1,7 @@
+babel.config.js
+coverage/
+jest.config.js
+src/
+tsconfig.json
+tslint.json
+README.md.backup

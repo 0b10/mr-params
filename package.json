@@ -1,10 +1,9 @@
 {
   "name": "mr-params",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Get parameter names from a given function reference",
   "main": "dist/index.js",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "@babel/cli": "^7.5.0",
     "@babel/core": "^7.5.4",
     "@babel/parser": "^7.5.0",
@@ -16,9 +15,10 @@
     "@babel/preset-typescript": "^7.3.3",
     "@babel/types": "^7.5.0",
     "@types/jest": "^24.0.15",
-    "@types/node": "^12.6.7",
+    "@types/node": "^12.6.7"
+  },
+  "devDependencies": {
     "babel-jest": "^24.8.0",
-    "chai": "^4.2.0",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
@@ -51,7 +51,7 @@
     "identifier",
     "identifiers"
   ],
-  "author": "0b10",
+  "author": "0b10 <0b10@pm.me>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/0b10/mr-params/issues"
