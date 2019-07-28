@@ -28,7 +28,6 @@
 import nativeCacheFactory, { ICacheOps } from "./cache";
 import { checkCache, IWrapper, wrap } from "./helpers";
 import { parse } from "./params";
-import { makeStub, stripEnds } from "./preprocess";
 
 // Factory
 export default function({
@@ -46,18 +45,18 @@ export default function({
       throw new TypeError(`funcRef must be a function reference, not: '${typeof funcRef}'`);
     }
 
-    const stubbedFuncStr = makeStub(stripEnds(funcRef.toString()));
+    const funcStr = funcRef.toString();
 
     // >>> CACHE >>>
-    const cacheResult = checkCache(cache, stubbedFuncStr, get, wrapWith);
+    const cacheResult = checkCache(cache, funcStr, get, wrapWith);
     if (cacheResult !== undefined) {
       return cacheResult;
     }
 
     // >>> PARSE >>>
-    const paramNames = parse(stubbedFuncStr);
+    const paramNames = parse(funcStr);
     if (cache) {
-      put(stubbedFuncStr, paramNames);
+      put(funcStr, paramNames);
     }
 
     if (wrapWith.length > 0 && paramNames) {

@@ -24,7 +24,6 @@
 //
 
 import { parse } from "../../../params";
-import { ITestDataIO } from "../../interfaces";
 
 // >>> TESTING LOGIC >>>
 /**
@@ -40,7 +39,7 @@ import { ITestDataIO } from "../../interfaces";
  *  }
  * ].forEach(testInputOutput) // Second arg is index: forEach({...}, index)
  */
-export const testInputOutput = ({ input, expected }: ITestDataIO, caseNum: number) => {
+export const testInputOutput = ({ input, expected }: IParamsTestDataIO, caseNum: number) => {
   describe(`(#${caseNum}): input: '${input}'`, () => {
     it(`should return an ordered array of strings, containing exactly: ${expected}`, () => {
       const result = parse(input) as string[]; // parse() shouldn't return boolean here, so 'as string[]'
@@ -49,3 +48,8 @@ export const testInputOutput = ({ input, expected }: ITestDataIO, caseNum: numbe
     });
   });
 };
+
+interface IParamsTestDataIO {
+  input: string;
+  expected: string[];
+}

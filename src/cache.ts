@@ -23,6 +23,10 @@
 //
 //
 
+// tslint:disable:no-var-requires
+
+const farmhash = require("farmhash"); // Doesn't support import
+
 /**
  * A closure containing a cache object, which returns operations.
  * @param debug - A boolean, set to true to throw a CacheDebugError for debugging purposes. See contained
@@ -39,8 +43,7 @@ export default (debug = false): ICacheOps => {
    * @example get("foo") // => ["a", "b", "c"]
    */
   const get = (key: string): false | string[] | undefined => {
-    const result = cache[key];
-    return result;
+    return cache[farmhash.hash64(key)];
   };
 
   /**
@@ -52,12 +55,13 @@ export default (debug = false): ICacheOps => {
    * @throws CacheDebugError if debug === true, and the key already exists in the cache.
    */
   const put = (key: string, val: string[] | false) => {
-    if (debug && cache[key] !== undefined) {
+    const hash = farmhash.hash64(key);
+    if (debug && cache[hash] !== undefined) {
       throw new CacheDebugError(
-        `The key already exists in the cache: k:'${key}', v:'${cache[key]}'`,
+        `The key already exists in the cache: k:'${hash}', v:'${cache[hash]}'`,
       );
     }
-    cache[key] = val;
+    cache[hash] = val;
   };
 
   return { get, put };

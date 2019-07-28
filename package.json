@@ -1,14 +1,16 @@
 {
   "name": "mr-params",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Get parameter names from a given function reference, optionally caching the results.",
   "main": "dist/index.js",
   "dependencies": {
     "@babel/parser": "^7.5.5",
-    "@babel/traverse": "^7.5.5"
+    "@babel/traverse": "^7.5.5",
+    "farmhash": "^3.0.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.15",
+    "@types/node": "^12.6.8",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
