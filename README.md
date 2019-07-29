@@ -2,7 +2,7 @@
 
 Get parameter names from a given function reference, optionally with parameter values.
 
-## Support
+## Supports
 ES6+
 
 * Typical parameters
@@ -59,15 +59,23 @@ getParams((a, b, c) => undefined, [1, 2, 3]); // => {a: 1, b: 2, c: 3}
 getParams((a, b, c) => undefined, args); // don't spread args. => {a: "foo", b: "bar", c: "baz"}
 ```
 
+## Dependencies
+
+* @babel/parse
+
+* @babel/traverse
+
+* farmhash
+
 
 # In Depth
 
 ## How It Works
-It uses the Babel AST for the parameters section only - i.e. it first strips the function body to avoid the expensive process of building an AST for the entire function.
+On first usage for a function reference, it will build a Babel AST for the entire function. All tokens are ignored, except parameters that are in scope (of the function body). The results are cached, avoiding the expensive process of rebuilding the AST.
 
-1. Preprocess: strip function body
-1. Check the cache, using the parameters spec as a key, return result on hit, continue on miss
-1. Build an AST from the parameters section and extract all parameters
+1. toString() the function and hash it
+1. Check the cache, using the hash as the key, return result on hit, continue on miss
+1. Build an AST for the complete function extract the parameters
 1. Store the result in the cache
 1. Return the result
 
