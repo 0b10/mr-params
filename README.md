@@ -1,6 +1,6 @@
 # TL;DR
 
-Get parameter names from a given function reference, optionally with parameter values.
+Get parameter names from a given function reference, and optionally cache the results.
 
 ## Supports
 ES6+
@@ -11,38 +11,35 @@ ES6+
 * Comments
 * Default args
 
-## Example
-
-
-```js
-import factory from "mr-params";
-const getParams = factory();
-export default getParams;
-```
-
-It's recommended that you run the factory once, because it initiates a cache.
-
-```js
-import getParams from "./my-module";
-getParams((a) => undefined); // => ["a"]
-```
-
-
-
 ## Features
 
 * Cache/Memoization
 * Wrapping results with argument values
 * Results are ordered by their (parameters) appearance in the function spec
 
+## Example
+
+```js
+const factory = require("mr-params").default;
+const getParams = factory();
+exports = getParams;
+```
+
+It's recommended that you run the factory once, because it initiates a cache.
+
+```js
+const getParams = require("./my-module");
+getParams((a) => undefined); // => ["a"]
+```
+
 ## Options
 
 ```js
-import factory from "mr-params";
+const factory = require("mr-params").default;
 const getParams = factory({
-	cache: true, // default.
-	debug: false, // default. Used internally. Not useful, for now.
-	cacheFactory: nativeCacheFactory // default. Optionally replace the caching mechanism
+  cache: true, // default.
+  debug: false, // default. Used internally. Not useful, for now.
+  cacheFactory: nativeCacheFactory // default. Optionally replace the caching mechanism
 });
 ```
 
@@ -92,14 +89,14 @@ interface ICacheOps {
 }
 ```
 
-This interface is also exported from the main module.
+This interface is also exported from the main module, if you use Typescript.
 
 ### Example
 
 ```typescript
 const myCacheFactory = (): ICacheOps => {{
-	get: (k) => ["foo", "bar", "baz"], // or false
-	put: (k, v) => undefined
+  get: (k) => ["foo", "bar", "baz"], // or false
+  put: (k, v) => undefined
 }}
 ```
 
