@@ -31,6 +31,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cache_1 = __importDefault(require("./cache"));
 const helpers_1 = require("./helpers");
 const params_1 = require("./params");
+const preprocess_1 = require("./preprocess");
 // Factory
 function default_1({ cache = true, debug = false, cacheFactory = cache_1.default, } = {}) {
     const { get, put } = cacheFactory(debug);
@@ -39,7 +40,8 @@ function default_1({ cache = true, debug = false, cacheFactory = cache_1.default
         if (typeof funcRef !== "function") {
             throw new TypeError(`funcRef must be a function reference, not: '${typeof funcRef}'`);
         }
-        const funcStr = funcRef.toString();
+        // Transforms must occur before cache. parse only accepts valid syntax, and it's cached with that string.
+        const funcStr = preprocess_1.transform(funcRef.toString());
         // >>> CACHE >>>
         const cacheResult = helpers_1.checkCache(cache, funcStr, get, wrapWith);
         if (cacheResult !== undefined) {
