@@ -22,7 +22,7 @@ export default getParams;
 
 It's recommended that you run the factory once, because it initiates a cache.
 
-```
+```js
 import getParams from "./my-module";
 getParams((a) => undefined); // => ["a"]
 ```
