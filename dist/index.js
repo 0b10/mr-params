@@ -31,7 +31,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cache_1 = __importDefault(require("./cache"));
 const helpers_1 = require("./helpers");
 const params_1 = require("./params");
-const preprocess_1 = require("./preprocess");
 // Factory
 function default_1({ cache = true, debug = false, cacheFactory = cache_1.default, } = {}) {
     const { get, put } = cacheFactory(debug);
@@ -40,16 +39,16 @@ function default_1({ cache = true, debug = false, cacheFactory = cache_1.default
         if (typeof funcRef !== "function") {
             throw new TypeError(`funcRef must be a function reference, not: '${typeof funcRef}'`);
         }
-        const stubbedFuncStr = preprocess_1.makeStub(preprocess_1.stripEnds(funcRef.toString()));
+        const funcStr = funcRef.toString();
         // >>> CACHE >>>
-        const cacheResult = helpers_1.checkCache(cache, stubbedFuncStr, get, wrapWith);
+        const cacheResult = helpers_1.checkCache(cache, funcStr, get, wrapWith);
         if (cacheResult !== undefined) {
             return cacheResult;
         }
         // >>> PARSE >>>
-        const paramNames = params_1.parse(stubbedFuncStr);
+        const paramNames = params_1.parse(funcStr);
         if (cache) {
-            put(stubbedFuncStr, paramNames);
+            put(funcStr, paramNames);
         }
         if (wrapWith.length > 0 && paramNames) {
             // param names is exclusively false or len > 0

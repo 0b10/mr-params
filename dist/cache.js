@@ -24,6 +24,8 @@
 //
 //
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable:no-var-requires
+const farmhash = require("farmhash"); // Doesn't support import
 /**
  * A closure containing a cache object, which returns operations.
  * @param debug - A boolean, set to true to throw a CacheDebugError for debugging purposes. See contained
@@ -39,8 +41,7 @@ exports.default = (debug = false) => {
      * @example get("foo") // => ["a", "b", "c"]
      */
     const get = (key) => {
-        const result = cache[key];
-        return result;
+        return cache[farmhash.hash64(key)];
     };
     /**
      * Insert a cache item. This function makes no prior checks for key existence, and will overwrite
@@ -51,10 +52,11 @@ exports.default = (debug = false) => {
      * @throws CacheDebugError if debug === true, and the key already exists in the cache.
      */
     const put = (key, val) => {
-        if (debug && cache[key] !== undefined) {
-            throw new CacheDebugError(`The key already exists in the cache: k:'${key}', v:'${cache[key]}'`);
+        const hash = farmhash.hash64(key);
+        if (debug && cache[hash] !== undefined) {
+            throw new CacheDebugError(`The key already exists in the cache: k:'${hash}', v:'${cache[hash]}'`);
         }
-        cache[key] = val;
+        cache[hash] = val;
     };
     return { get, put };
 };

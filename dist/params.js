@@ -38,8 +38,11 @@ exports.parse = (funcStr) => {
             const identifiers = [];
             for (const key in bindings) {
                 // keys are not own properties, don't filter
-                const { start } = bindings[key].identifier; // Symbol position (row/column agnostic)
-                identifiers.push({ name: key, pos: start });
+                const kind = bindings[key].kind; // They are all strings, TS just making a noise
+                if (typeof kind === "string" && kind === "param") {
+                    const { start } = bindings[key].identifier; // Symbol position (row/column agnostic)
+                    identifiers.push({ name: key, pos: start });
+                }
             }
             // sorts asc, then map to names array
             paramNames = identifiers

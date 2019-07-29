@@ -50,12 +50,9 @@ const getParams = factory({
 You can wrap the results with their related values - typically you'd use an args array:
 
 ```js
-import factory from "mr-params";
-const getParams = factory();
 getParams((a, b, c) => undefined, [1, 2, 3]); // => {a: 1, b: 2, c: 3}
 
-// with args array
-// args = ["foo", "bar", "baz"]
+// with: args = ["foo", "bar", "baz"]
 getParams((a, b, c) => undefined, args); // don't spread args. => {a: "foo", b: "bar", c: "baz"}
 ```
 
@@ -83,9 +80,7 @@ On first usage for a function reference, it will build a Babel AST for the entir
 You can replace the cache with your own implementation:
 
 ```js
-import factory from "mr-params";
 const getParams = factory({ cacheFactory: myCacheFactory });
-getParams((a) => undefined); // => ["a"]
 ```
 
 The cache factory must return a cache object with the following (TS) interface:
