@@ -15,17 +15,17 @@ ES6+
 
 * Cache/Memoization
 * Wrapping results with argument values
-* Results are ordered by their (parameters) appearance in the function spec
+* Parameters are ordered by their appearance in the function definition
 
 ## Example
+
+It's recommended that you run the factory only once, because it initiates a cache - so initialise it in it's own module and export it:
 
 ```js
 const factory = require("mr-params").default;
 const getParams = factory();
 exports = getParams;
 ```
-
-It's recommended that you run the factory once, because it initiates a cache.
 
 ```js
 const getParams = require("./my-module");
@@ -69,7 +69,7 @@ On first usage for a function reference, it will build a Babel AST for the entir
 
 1. toString() the function and hash it
 1. Check the cache, using the hash as the key, return result on hit, continue on miss
-1. Build an AST for the complete function extract the parameters
+1. Build an AST for the entire function, and extract the parameters
 1. Store the result in the cache
 1. Return the result
 

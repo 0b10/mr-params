@@ -28,6 +28,7 @@
 import nativeCacheFactory, { ICacheOps } from "./cache";
 import { checkCache, IWrapper, wrap } from "./helpers";
 import { parse } from "./params";
+import { transform } from "./preprocess";
 
 // Factory
 export default function({
@@ -45,7 +46,8 @@ export default function({
       throw new TypeError(`funcRef must be a function reference, not: '${typeof funcRef}'`);
     }
 
-    const funcStr = funcRef.toString();
+    // Transforms must occur before cache. parse only accepts valid syntax, and it's cached with that string.
+    const funcStr = transform(funcRef.toString());
 
     // >>> CACHE >>>
     const cacheResult = checkCache(cache, funcStr, get, wrapWith);

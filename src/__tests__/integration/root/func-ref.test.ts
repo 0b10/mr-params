@@ -23,8 +23,11 @@
 //
 //
 
-// tslint:disable:no-unused-expression
+// tslint:disable:arrow-parens
 // tslint:disable:max-line-length
+// tslint:disable:no-unused-expression
+// tslint:disable:object-literal-shorthand
+// tslint:disable:only-arrow-functions
 
 import compose from "../../..";
 import { testInputOutput } from "./helpers";
@@ -33,6 +36,89 @@ describe("Integration Tests: root", () => {
   describe("the inner function", () => {
     it("should function for a simple case", () => {
       expect(composeFactory()(() => undefined)).toBe(false);
+    });
+
+    // { input: { funcRef, wrapWith }, expected, options }
+    describe("function types", () => {
+      class MockClass {
+        public mockMethod(a: any, b: any, c: any) {
+          return undefined;
+        }
+        public async mockAsyncMethod(a: any) {
+          return undefined;
+        }
+      }
+
+      [
+        // #0 - method
+        {
+          expected: ["a", "b", "c"],
+          input: {
+            funcRef: new MockClass().mockMethod,
+          },
+          options: {
+            cache: false,
+          },
+        },
+        // #1 - async method
+        {
+          expected: ["a"],
+          input: {
+            funcRef: new MockClass().mockAsyncMethod,
+          },
+          options: {
+            cache: false,
+          },
+        },
+        // #2 = function expression
+        {
+          expected: ["a", "b"],
+          input: {
+            funcRef: function(a: any, b: any) {
+              return undefined;
+            },
+          },
+          options: {
+            cache: false,
+          },
+        },
+        // #3 = async function expression
+        {
+          expected: ["a", "b"],
+          input: {
+            funcRef: async function(a: any, b: any) {
+              return undefined;
+            },
+          },
+          options: {
+            cache: false,
+          },
+        },
+        // #4 = arrow function
+        {
+          expected: ["a", "b"],
+          input: {
+            funcRef: (a: any, b: any) => {
+              return undefined;
+            },
+          },
+          options: {
+            cache: false,
+          },
+        },
+        // #5 = async arrow function
+        {
+          expected: ["a", "b", "c"],
+          input: {
+            funcRef: async (a: any, b: any, c: any) => {
+              return undefined;
+            },
+          },
+          options: {
+            cache: false,
+          },
+        },
+      ].forEach(testInputOutput);
     });
 
     // >>> Simple Args >>>
