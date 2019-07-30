@@ -39,23 +39,47 @@ describe("Unit Tests: helpers (root)", () => {
           paramNames: [],
           wrapWith: [],
         },
-        // #1 - single arg
+        // #1 - single arg - equal num of wrapWith
         {
           expected: { a: 1 },
           paramNames: ["a"],
           wrapWith: [1],
         },
-        // #2 - multiple args
+        // #2 - multiple args - equal num of wrapWith
         {
           expected: { a: 1, b: 2, c: 3 },
           paramNames: ["a", "b", "c"],
           wrapWith: [1, 2, 3],
         },
-        // #3 - mixed types
+        // #3 - mixed types - equal num of wraWith
         {
-          expected: { f: "a", g: 2, b: /foo/ },
+          expected: { f: "r", g: 2, b: /foo/ },
           paramNames: ["f", "g", "b"],
-          wrapWith: ["a", 2, /foo/],
+          wrapWith: ["r", 2, /foo/],
+        },
+        // #4 - 1 unused param, 0 wrapWith
+        {
+          expected: { a: undefined },
+          paramNames: ["a"],
+          wrapWith: [],
+        },
+        // #5 - 2 unused param, 0 wrapWith
+        {
+          expected: { a: undefined, b: undefined },
+          paramNames: ["a", "b"],
+          wrapWith: [],
+        },
+        // #6 - 1 unused param, 1 wrapWith
+        {
+          expected: { a: 1, b: undefined },
+          paramNames: ["a", "b"],
+          wrapWith: [1],
+        },
+        // #7 - 1 unused param, 2 wrapWith
+        {
+          expected: { a: 1, b: 2, c: undefined },
+          paramNames: ["a", "b", "c"],
+          wrapWith: [1, 2],
         },
       ].forEach(testWrap);
     });
@@ -63,25 +87,30 @@ describe("Unit Tests: helpers (root)", () => {
     // >>> EXCEPTIONAL CASES >>>
     describe(">>> exceptional cases", () => {
       [
-        // #0 - extra param name
-        {
-          paramNames: ["a"],
-          wrapWith: [],
-        },
         // #0 - extra wrapWith
         {
           paramNames: [],
           wrapWith: [1],
         },
-        // #2 - man more param names, with some wrapWith
+        // #1 - two extra
         {
-          paramNames: ["a", "z", "g", "n", "x", "r", "o"],
-          wrapWith: [1, 2, 3],
+          paramNames: [],
+          wrapWith: [1, 2],
         },
-        // #2 - man more param names, with some wrapWith
+        // #2 - one extra, but with params
         {
           paramNames: ["a", "z", "g"],
-          wrapWith: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+          wrapWith: [1, 2, 3, 4],
+        },
+        // #3 - two extra, but with params
+        {
+          paramNames: ["a", "z", "g"],
+          wrapWith: [1, 2, 3, 4, 5],
+        },
+        // #3 - many extra, but with params
+        {
+          paramNames: ["a", "z", "g"],
+          wrapWith: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         },
       ].forEach(testWrapThrows);
     });

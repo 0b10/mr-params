@@ -25,7 +25,8 @@
 //
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.wrap = (wrapWith, paramNames) => {
-    if (wrapWith.length !== paramNames.length) {
+    if (wrapWith.length > paramNames.length) {
+        // some params can be undefined (unused)
         // paramNames as string[] has a guard
         throw new RangeError(`wrapWith.length (${wrapWith.length}) should match the number of returned parameters (${paramNames.length}), cannot wrap`);
     }

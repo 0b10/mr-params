@@ -24,7 +24,8 @@
 //
 
 export const wrap = (wrapWith: any[], paramNames: string[]): IWrapper => {
-  if (wrapWith.length !== paramNames.length) {
+  if (wrapWith.length > paramNames.length) {
+    // some params can be undefined (unused)
     // paramNames as string[] has a guard
     throw new RangeError(
       `wrapWith.length (${wrapWith.length}) should match the number of returned parameters (${
